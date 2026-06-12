@@ -14,7 +14,12 @@
  * 3. Deploy ▸ New deployment ▸ gear icon ▸ "Web app".
  *      - Description:        SafeSips waitlist
  *      - Execute as:         Me (jamld2135@gmail.com)
- *      - Who has access:     Anyone
+ *      - Who has access:     **Anyone**  (NOT "Anyone with Google Account")
+ *
+ *    ⚠️ THIS MATTERS: the website POSTs anonymously (no Google sign-in). If access
+ *    is set to "Anyone with Google Account" the endpoint returns HTTP 401 and every
+ *    signup silently fails. It MUST be "Anyone" for the public form to work.
+ *
  *    Click Deploy, then "Authorize access" and grant the Gmail + Sheets
  *    permissions (you may see an "unverified app" screen — choose
  *    Advanced ▸ Go to … ▸ Allow, since this is your own script).
@@ -42,6 +47,8 @@ function doPost(e) {
     const email = String(data.email || '').trim().toLowerCase();
     const name = String(data.name || '').trim();
 
+    Logger.log('doPost received: email=%s source=%s', email, String(data.source || 'website'));
+
     // Honeypot: bots fill hidden fields; humans never do.
     if (String(data.company || '').trim() !== '') {
       return json({ ok: true }); // silently accept, store nothing
@@ -52,6 +59,9 @@ function doPost(e) {
 
     const sheet = getSheet();
     const isNew = !emailExists(sheet, email);
+
+    // Always persist the subscriber FIRST so a flaky/unauthorized email never
+    // costs us the signup.
     if (isNew) {
       sheet.appendRow([
         new Date(),
@@ -60,12 +70,32 @@ function doPost(e) {
         String(data.source || 'website'),
         String(data.ua || '')
       ]);
-      sendWelcome(email, name);
     }
 
-    return json({ ok: true, alreadySubscribed: !isNew });
+    // The welcome email is isolated in its own try/catch: a send failure must
+    // not undo the row write above, nor bubble up as a generic failure.
+    let emailSent = false;
+    let emailError = '';
+    if (isNew) {
+      try {
+        sendWelcome(email, name);
+        emailSent = true;
+      } catch (mailErr) {
+        emailError = String(mailErr && mailErr.message ? mailErr.message : mailErr);
+        Logger.log('sendWelcome failed for %s: %s', email, emailError);
+      }
+    }
+
+    return json({
+      ok: true,
+      alreadySubscribed: !isNew,
+      emailSent: emailSent,
+      emailError: emailError
+    });
   } catch (err) {
-    return json({ ok: false, error: String(err && err.message ? err.message : err) });
+    const message = String(err && err.message ? err.message : err);
+    Logger.log('doPost failed: %s', message);
+    return json({ ok: false, error: message });
   }
 }
 

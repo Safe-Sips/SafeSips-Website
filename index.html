@@ -1536,6 +1536,8 @@ if (statsSection) {
     if (result && result.ok) {
       if (result.alreadySubscribed) {
         setMsg("You're already on the list — thanks! 🩷", 'success');
+      } else if (result.emailSent === false) {
+        setMsg("You're on the list! 🩷 (Your welcome email may take a moment.)", 'success');
       } else {
         setMsg("You're in! Check your inbox for a welcome email. 🩷", 'success');
       }
