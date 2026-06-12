@@ -1452,7 +1452,7 @@ if (statsSection) {
   // Set this to your Apps Script Web App URL (ends with /exec), or define
   // window.SAFESIPS_WAITLIST_URL before this script runs.
   const WAITLIST_ENDPOINT = (typeof window.SAFESIPS_WAITLIST_URL === 'string' && window.SAFESIPS_WAITLIST_URL)
-    || 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL';
+    || 'https://script.google.com/macros/s/AKfycby2ZecBFV6Pj9vY-iSYKyhjX-7WtIathpTRB3wU_CrcWBx1grR5_83v6Pvb-whdbNQ_/exec';
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const backdrop = document.getElementById('waitlist');
