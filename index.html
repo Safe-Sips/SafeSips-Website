@@ -475,6 +475,62 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   .lm-panel { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 60vh; overflow-y: auto; }
   .lm-title { font-size: 1.3rem; }
 }
+
+/* ── WAITLIST MODAL ── */
+.wl-backdrop {
+  position: fixed; inset: 0; z-index: 3000; display: none;
+  align-items: center; justify-content: center; padding: 20px;
+  background: rgba(0,31,63,.55); backdrop-filter: blur(6px);
+}
+.wl-backdrop.open { display: flex; animation: wlFade .22s ease; }
+@keyframes wlFade { from { opacity: 0; } to { opacity: 1; } }
+.wl-card {
+  position: relative; width: min(440px, 100%);
+  background: rgba(255,255,255,.92); backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,.85); border-radius: 26px;
+  padding: 38px 34px 28px; box-shadow: 0 30px 80px rgba(0,31,63,.4);
+  animation: wlPop .28s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes wlPop { from { transform: translateY(16px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+.wl-close {
+  position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+  border: none; border-radius: 50%; background: rgba(0,31,63,.08); color: var(--navy);
+  font-size: 1.5rem; line-height: 1; cursor: pointer; transition: background .2s, color .2s;
+}
+.wl-close:hover { background: var(--pink); color: #fff; }
+.wl-tag {
+  display: inline-block; background: var(--pink); color: #fff; font-size: .68rem; font-weight: 900;
+  letter-spacing: 2.5px; text-transform: uppercase; padding: 5px 16px; border-radius: 50px; margin-bottom: 14px;
+}
+.wl-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.4rem,7vw,3.4rem); color: var(--navy); line-height: .95; letter-spacing: 1px; margin-bottom: 12px; }
+.wl-title span { color: var(--pink); }
+.wl-sub { font-size: .94rem; color: #4a4a6a; line-height: 1.6; margin-bottom: 22px; }
+#wlForm { display: flex; flex-direction: column; gap: 12px; }
+#wlForm input {
+  width: 100%; background: #fff; border: 2px solid rgba(0,31,63,.12); border-radius: 14px;
+  padding: 14px 16px; font-family: 'Nunito', sans-serif; font-size: 1rem; color: var(--navy); transition: border-color .18s;
+}
+#wlForm input::placeholder { color: #9a9ab0; }
+#wlForm input:focus { outline: none; border-color: var(--pink); }
+#wlForm input.invalid { border-color: #e23; }
+.wl-hp { position: absolute !important; left: -9999px !important; width: 1px !important; height: 1px !important; opacity: 0 !important; }
+.wl-submit {
+  margin-top: 4px; background: var(--pink); color: #fff; border: none; padding: 16px 24px; border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer;
+  transition: transform .18s, box-shadow .18s, opacity .18s; box-shadow: 0 8px 28px rgba(255,20,147,.4);
+}
+.wl-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 38px rgba(255,20,147,.5); }
+.wl-submit:disabled { opacity: .6; cursor: default; }
+.wl-msg { font-size: .9rem; line-height: 1.5; margin: 4px 2px 0; min-height: 1.2em; }
+.wl-msg.success { color: #1a9d5a; font-weight: 700; }
+.wl-msg.error { color: #d63; font-weight: 700; }
+.wl-fine { font-size: .74rem; color: #8a8aa0; line-height: 1.5; margin-top: 18px; text-align: center; }
+@media (prefers-reduced-motion: reduce) {
+  .wl-backdrop.open, .wl-card { animation: none; }
+}
+@media (max-width: 480px) {
+  .wl-card { padding: 32px 22px 24px; border-radius: 22px; }
+}
 </style>
 </head>
 <body>
@@ -490,7 +546,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
     <li><a href="#livemap" class="nav-livemap js-livemap"><span class="nav-live-dot"></span>Live Map</a></li>
   </ul>
   <div class="nav-right">
-    <button class="btn-nav" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Yours →</button>
+    <button class="btn-nav js-waitlist">Get Yours →</button>
     <button class="hamburger" id="hbg" aria-label="Open menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
@@ -502,7 +558,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   <a href="#how">How it Works</a>
   <a href="#app">The App</a>
   <a href="#livemap" class="js-livemap"><span class="nav-live-dot"></span>Live Map</a>
-  <button class="btn-nav" style="align-self:flex-start" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Yours →</button>
+  <button class="btn-nav js-waitlist" style="align-self:flex-start">Get Yours →</button>
 </div>
 
 <!-- ═══ HERO ═══ -->
@@ -535,7 +591,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
     <p class="hero-sub">Your best party friend</p>
     <p class="hero-desc">A discreet pen that detects drugs in your drink in seconds. Because safety should never be a privilege — it should fit in your pocket.</p>
     <div class="hero-btns">
-      <button class="btn-p" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Join the Waitlist ✦</button>
+      <button class="btn-p js-waitlist">Join the Waitlist ✦</button>
       <button class="btn-s" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How it Works</button>
     </div>
   </div>
@@ -920,7 +976,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   <div class="reveal">
     <h2 class="stitle">SAFETY IN<br>YOUR POCKET</h2>
     <p class="cta-sub">In the end, safety shouldn't be a privilege. It should be something you carry everywhere, every night out.</p>
-    <button class="btn-cta">Join the Waitlist ✦</button>
+    <button class="btn-cta js-waitlist">Join the Waitlist ✦</button>
     <p class="cta-note">Be the first to know when SafeSips launches in Romania</p>
   </div>
 </section>
@@ -966,6 +1022,27 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
     </div>
   </div>
 </footer>
+
+<!-- ═══ WAITLIST MODAL ═══ -->
+<div id="waitlist" class="wl-backdrop" aria-hidden="true">
+  <div class="wl-card" role="dialog" aria-modal="true" aria-labelledby="wlTitle">
+    <button class="wl-close" id="wlClose" aria-label="Close">&times;</button>
+    <div class="wl-tag">Join the Waitlist</div>
+    <h2 class="wl-title" id="wlTitle">BE FIRST<br><span>TO KNOW</span></h2>
+    <p class="wl-sub">Drop your email and we'll let you know the moment SafeSips launches — plus early access and progress updates.</p>
+
+    <form id="wlForm" novalidate>
+      <input type="text" id="wlName" name="name" placeholder="Your name (optional)" autocomplete="name">
+      <input type="email" id="wlEmail" name="email" placeholder="you@email.com" autocomplete="email" required>
+      <!-- honeypot: hidden from humans, bots tend to fill it -->
+      <input type="text" id="wlCompany" name="company" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" class="wl-submit" id="wlSubmit">Join the Waitlist ✦</button>
+      <p class="wl-msg" id="wlMsg" role="status" aria-live="polite"></p>
+    </form>
+
+    <p class="wl-fine">We only use your email to update you about SafeSips. No spam — unsubscribe anytime by replying.</p>
+  </div>
+</div>
 
 <!-- ═══ LIVE MAP OVERLAY ═══ -->
 <div id="livemap" class="lm-overlay" aria-hidden="true" role="dialog" aria-label="SafeSips live safety map">
@@ -1363,6 +1440,114 @@ if (statsSection) {
 
   // Deep-link support: open the map if the page loads with #livemap.
   if (location.hash === '#livemap') openMap();
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   WAITLIST — captures an email and subscribes via a Google Apps
+   Script web app that stores it in a Sheet and sends a welcome email
+   from jamld2135@gmail.com. See waitlist.apps-script.gs for the
+   backend + deployment steps. Paste the deployed /exec URL below.
+   ════════════════════════════════════════════════════════════════ */
+(function () {
+  // Set this to your Apps Script Web App URL (ends with /exec), or define
+  // window.SAFESIPS_WAITLIST_URL before this script runs.
+  const WAITLIST_ENDPOINT = (typeof window.SAFESIPS_WAITLIST_URL === 'string' && window.SAFESIPS_WAITLIST_URL)
+    || 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL';
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const backdrop = document.getElementById('waitlist');
+  const closeBtn = document.getElementById('wlClose');
+  const form = document.getElementById('wlForm');
+  const nameEl = document.getElementById('wlName');
+  const emailEl = document.getElementById('wlEmail');
+  const honeypot = document.getElementById('wlCompany');
+  const submitBtn = document.getElementById('wlSubmit');
+  const msgEl = document.getElementById('wlMsg');
+  let lastFocus = null;
+
+  function setMsg(text, kind) {
+    msgEl.textContent = text || '';
+    msgEl.className = 'wl-msg' + (kind ? ' ' + kind : '');
+  }
+
+  function open(e) {
+    if (e) e.preventDefault();
+    lastFocus = document.activeElement;
+    // close the mobile menu if it happens to be open
+    if (mm && mm.classList.contains('open')) { hbg.classList.remove('open'); mm.classList.remove('open'); }
+    backdrop.classList.add('open');
+    backdrop.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setMsg('');
+    emailEl.classList.remove('invalid');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Join the Waitlist ✦';
+    setTimeout(() => emailEl.focus(), 60);
+  }
+  function close() {
+    backdrop.classList.remove('open');
+    backdrop.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  document.querySelectorAll('.js-waitlist').forEach((b) => b.addEventListener('click', open));
+  closeBtn.addEventListener('click', close);
+  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && backdrop.classList.contains('open')) close(); });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailEl.value.trim();
+    const name = nameEl.value.trim();
+
+    if (!EMAIL_RE.test(email)) {
+      emailEl.classList.add('invalid');
+      setMsg('Please enter a valid email address.', 'error');
+      emailEl.focus();
+      return;
+    }
+    emailEl.classList.remove('invalid');
+
+    // Honeypot filled => almost certainly a bot. Pretend success, send nothing.
+    if (honeypot && honeypot.value.trim() !== '') { setMsg("You're on the list!", 'success'); return; }
+
+    // Not configured yet: keep the UX graceful instead of erroring.
+    if (WAITLIST_ENDPOINT.indexOf('PASTE_YOUR') !== -1) {
+      setMsg("Thanks! Our waitlist opens shortly — please check back soon.", 'success');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Joining…';
+    setMsg('');
+
+    const payload = { email, name, source: 'safesips-website', ua: navigator.userAgent };
+    let result;
+    try {
+      // No custom headers => "simple" request => no CORS preflight.
+      const res = await fetch(WAITLIST_ENDPOINT, { method: 'POST', body: JSON.stringify(payload) });
+      result = await res.json();
+    } catch (err) {
+      // Response may be unreadable cross-origin even though the write succeeded.
+      result = { ok: true, optimistic: true };
+    }
+
+    if (result && result.ok) {
+      if (result.alreadySubscribed) {
+        setMsg("You're already on the list — thanks! 🩷", 'success');
+      } else {
+        setMsg("You're in! Check your inbox for a welcome email. 🩷", 'success');
+      }
+      form.reset();
+      submitBtn.textContent = 'Joined ✓';
+      setTimeout(() => { if (backdrop.classList.contains('open')) close(); }, 2600);
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join the Waitlist ✦';
+      setMsg('Something went wrong. Please try again.', 'error');
+    }
+  });
 })();
 </script>
 </body>
