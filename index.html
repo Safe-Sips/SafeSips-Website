@@ -360,6 +360,121 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   .pt1, .pt2, .pt3 { display: none; }
   .prob-q-text { font-size: 1.7rem; }
 }
+
+/* ── LIVE MAP TAB + OVERLAY ── */
+.nav-livemap { display: inline-flex; align-items: center; gap: 7px; }
+.nav-live-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--pink);
+  box-shadow: 0 0 0 0 rgba(255,20,147,.6); animation: navLiveDot 1.8s ease-out infinite; flex-shrink: 0;
+}
+@keyframes navLiveDot {
+  0% { box-shadow: 0 0 0 0 rgba(255,20,147,.55); }
+  100% { box-shadow: 0 0 0 8px rgba(255,20,147,0); }
+}
+#mobMenu .js-livemap { display: inline-flex; align-items: center; gap: 8px; }
+
+.lm-overlay {
+  position: fixed; inset: 0; z-index: 2000; display: none;
+  background: #0a0a0f; color: #f4f4f7;
+  font-family: 'Nunito', sans-serif;
+  flex-direction: column;
+}
+.lm-overlay.open { display: flex; animation: lmFade .25s ease; }
+@keyframes lmFade { from { opacity: 0; } to { opacity: 1; } }
+
+.lm-topbar {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 5vw; background: var(--navy);
+  border-bottom: 1px solid rgba(255,255,255,.08); z-index: 10;
+}
+.lm-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: #fff; }
+.lm-title span { color: var(--pink); }
+.lm-top-right { display: flex; align-items: center; gap: 14px; }
+.lm-status {
+  display: inline-flex; align-items: center; gap: 7px; font-size: .74rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .6px; padding: 5px 12px; border-radius: 50px;
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.75);
+}
+.lm-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #9aa0ad; }
+.lm-status.live .lm-status-dot { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,.8); }
+.lm-status.live { color: #22c55e; }
+.lm-status.connecting .lm-status-dot { background: var(--gold); }
+.lm-status.connecting { color: var(--gold); }
+.lm-status.solo .lm-status-dot { background: var(--gold); }
+.lm-status.solo { color: var(--gold); }
+.lm-status.offline .lm-status-dot { background: var(--pink); }
+.lm-status.offline { color: var(--pink); }
+.lm-close {
+  background: rgba(255,255,255,.1); color: #fff; border: none; width: 38px; height: 38px;
+  border-radius: 50%; font-size: 1.5rem; line-height: 1; cursor: pointer; transition: background .2s;
+}
+.lm-close:hover { background: var(--pink); }
+
+.lm-stage { position: relative; flex: 1; overflow: hidden; }
+.lm-map { position: absolute; inset: 0; background: #05060a; }
+.lm-map .leaflet-tile-pane { filter: brightness(.72) saturate(1.05) contrast(1.05); }
+.leaflet-container { background: #05060a; font-family: 'Nunito', sans-serif; }
+
+.lm-panel {
+  position: absolute; z-index: 1000; top: 16px; left: 16px; width: min(360px, calc(100% - 32px));
+  background: rgba(0,31,63,.86); backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.45);
+}
+.lm-btn {
+  border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: .92rem; padding: 12px 16px; cursor: pointer; transition: transform .05s, filter .15s, opacity .15s;
+}
+.lm-btn:active { transform: translateY(1px); }
+.lm-btn:disabled { opacity: .5; cursor: not-allowed; }
+.lm-btn-primary { width: 100%; background: var(--pink); color: #fff; box-shadow: 0 6px 22px rgba(255,20,147,.4); }
+.lm-btn-primary:hover:not(:disabled) { filter: brightness(1.06); }
+.lm-btn-secondary { background: rgba(255,255,255,.12); color: #fff; }
+.lm-btn-ghost { background: rgba(255,255,255,.08); color: #fff; flex: 1; }
+.lm-btn-danger { background: rgba(255,20,147,.18); color: var(--pink); flex: 1; }
+.lm-address { display: flex; gap: 8px; margin-top: 12px; }
+.lm-address input {
+  flex: 1; min-width: 0; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px; color: #fff; padding: 12px; font-size: .92rem; font-family: 'Nunito', sans-serif;
+}
+.lm-address input::placeholder { color: rgba(255,255,255,.5); }
+.lm-address input:focus { outline: 2px solid rgba(255,20,147,.55); }
+.lm-hint { font-size: .82rem; color: rgba(255,255,255,.66); margin-top: 10px; min-height: 0; }
+.lm-hint.error { color: #ff7591; }
+.lm-statusbox {
+  margin-top: 14px; padding: 12px; border-radius: 14px;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+}
+.lm-statusbox.sharing { border-color: rgba(255,20,147,.4); background: rgba(255,20,147,.08); }
+.lm-row { display: flex; justify-content: space-between; align-items: center; font-size: .84rem; padding: 4px 0; }
+.lm-row > span:first-child { color: rgba(255,255,255,.62); }
+.lm-row > span:last-child { font-weight: 800; }
+.lm-actions { display: flex; gap: 8px; margin-top: 10px; }
+.lm-note { font-size: .76rem; color: rgba(255,255,255,.62); line-height: 1.55; margin-top: 14px; }
+.lm-note strong { color: var(--gold); }
+.lm-legend { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; font-size: .76rem; color: rgba(255,255,255,.66); }
+.lm-legend span { display: flex; align-items: center; gap: 8px; }
+.lm-sw { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.lm-sw-blue { background: #2f7bff; border: 2px solid #fff; }
+.lm-sw-yellow { background: rgba(245,197,24,.3); border: 1px solid var(--yellow-ch); }
+
+/* radar circle animations (scoped to the live map) */
+#livemap .privacy-circle { animation: lmPulse 2.4s ease-in-out infinite; }
+@keyframes lmPulse {
+  0%,100% { stroke-opacity: .95; stroke-width: 2; }
+  50% { stroke-opacity: .35; stroke-width: 4; }
+}
+#livemap .radar-sweep { stroke-opacity: .7; animation: lmSweep 3s linear infinite; }
+@keyframes lmSweep { to { stroke-dashoffset: -360; } }
+#livemap .self-dot { filter: drop-shadow(0 0 6px rgba(47,123,255,.9)); }
+
+@media (prefers-reduced-motion: reduce) {
+  #livemap .privacy-circle, #livemap .radar-sweep, .nav-live-dot { animation: none; }
+}
+@media (max-width: 560px) {
+  .lm-panel { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 60vh; overflow-y: auto; }
+  .lm-title { font-size: 1.3rem; }
+}
 </style>
 </head>
 <body>
@@ -372,6 +487,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
     <li><a href="#friends">Why SafeSips</a></li>
     <li><a href="#how">How it Works</a></li>
     <li><a href="#app">The App</a></li>
+    <li><a href="#livemap" class="nav-livemap js-livemap"><span class="nav-live-dot"></span>Live Map</a></li>
   </ul>
   <div class="nav-right">
     <button class="btn-nav" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Yours →</button>
@@ -385,6 +501,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   <a href="#friends">Why SafeSips</a>
   <a href="#how">How it Works</a>
   <a href="#app">The App</a>
+  <a href="#livemap" class="js-livemap"><span class="nav-live-dot"></span>Live Map</a>
   <button class="btn-nav" style="align-self:flex-start" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Yours →</button>
 </div>
 
@@ -850,6 +967,42 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   </div>
 </footer>
 
+<!-- ═══ LIVE MAP OVERLAY ═══ -->
+<div id="livemap" class="lm-overlay" aria-hidden="true" role="dialog" aria-label="SafeSips live safety map">
+  <div class="lm-topbar">
+    <div class="lm-title">Safe<span>Sips</span> · Live Map</div>
+    <div class="lm-top-right">
+      <span class="lm-status connecting" id="lmStatus"><span class="lm-status-dot"></span><span id="lmStatusText">Loading…</span></span>
+      <button class="lm-close" id="lmClose" aria-label="Close live map">&times;</button>
+    </div>
+  </div>
+  <div class="lm-stage">
+    <div id="lmMap" class="lm-map"></div>
+    <aside class="lm-panel">
+      <button class="lm-btn lm-btn-primary" id="lmShare">Share My Location</button>
+      <form class="lm-address" id="lmAddrForm">
+        <input id="lmAddr" type="text" placeholder="Enter your address" aria-label="Enter your address" autocomplete="off">
+        <button class="lm-btn lm-btn-secondary" type="submit">Go</button>
+      </form>
+      <p class="lm-hint" id="lmHint"></p>
+      <div class="lm-statusbox" id="lmStatusBox">
+        <div class="lm-row"><span>Sharing status</span><span id="lmSharing">Not sharing</span></div>
+        <div class="lm-row"><span>Last update</span><span id="lmLast">&mdash;</span></div>
+        <div class="lm-row"><span>Others nearby</span><span id="lmOthers">0</span></div>
+        <div class="lm-actions" id="lmActions" hidden>
+          <button class="lm-btn lm-btn-ghost" id="lmUpdate">Update</button>
+          <button class="lm-btn lm-btn-danger" id="lmStop">Stop sharing</button>
+        </div>
+      </div>
+      <p class="lm-note">Your precise location stays private. Others see only an approximate <strong>200&nbsp;m</strong> area centered on a randomized point.</p>
+      <div class="lm-legend">
+        <span><i class="lm-sw lm-sw-blue"></i> Your exact spot (only you)</span>
+        <span><i class="lm-sw lm-sw-yellow"></i> Public 200&nbsp;m area</span>
+      </div>
+    </aside>
+  </div>
+</div>
+
 <script>
 // Nav scroll shadow
 const nb = document.getElementById('navbar');
@@ -861,10 +1014,12 @@ const mm  = document.getElementById('mobMenu');
 hbg.addEventListener('click', () => { hbg.classList.toggle('open'); mm.classList.toggle('open'); });
 mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { hbg.classList.remove('open'); mm.classList.remove('open'); }));
 
-// Smooth-scroll all anchors
+// Smooth-scroll all anchors (the Live Map tab is handled separately below)
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
-    const t = document.querySelector(a.getAttribute('href'));
+    const href = a.getAttribute('href');
+    if (href === '#livemap' || href === '#') return;
+    const t = document.querySelector(href);
     if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
   });
 });
@@ -945,6 +1100,270 @@ if (statsSection) {
     }
   }, { threshold: 0.3 }).observe(statsSection);
 }
+
+/* ════════════════════════════════════════════════════════════════
+   LIVE MAP — privacy-preserving real-time location sharing
+   Same masking algorithm + Socket.io protocol as the SafeSips
+   web/mobile apps (presence:self/init/upsert/remove, location:update,
+   location:stop). Works solo (GPS + masking + circle) with no server;
+   syncs live when a server URL is configured.
+   ════════════════════════════════════════════════════════════════ */
+(function () {
+  const PUBLIC_RADIUS_METERS = 200;
+  const MASK_RADIUS_METERS = 50;
+  const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  const SOCKET_JS = 'https://cdn.socket.io/4.8.1/socket.io.min.js';
+  const DEFAULT_CENTER = [44.4268, 26.1025]; // Bucharest
+
+  // Configure where to sync. Set window.SAFESIPS_LIVE_MAP_SERVER = 'https://your-server'
+  // (use https/wss in production). Defaults to localhost during local dev.
+  const SERVER_URL = (typeof window.SAFESIPS_LIVE_MAP_SERVER === 'string')
+    ? window.SAFESIPS_LIVE_MAP_SERVER
+    : ((location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:4000' : '');
+
+  const overlay = document.getElementById('livemap');
+  const closeBtn = document.getElementById('lmClose');
+  const shareBtn = document.getElementById('lmShare');
+  const addrForm = document.getElementById('lmAddrForm');
+  const addrInput = document.getElementById('lmAddr');
+  const hintEl = document.getElementById('lmHint');
+  const sharingEl = document.getElementById('lmSharing');
+  const lastEl = document.getElementById('lmLast');
+  const othersEl = document.getElementById('lmOthers');
+  const actionsEl = document.getElementById('lmActions');
+  const statusBox = document.getElementById('lmStatusBox');
+  const updateBtn = document.getElementById('lmUpdate');
+  const stopBtn = document.getElementById('lmStop');
+  const statusPill = document.getElementById('lmStatus');
+  const statusText = document.getElementById('lmStatusText');
+
+  let libsPromise = null, map = null, socket = null, inited = false;
+  let exact = null, selfPublic = null, selfId = null, lastSource = null;
+  let acked = false, lastUpdateAt = null, lastTimer = null;
+  let selfDot = null, selfCircle = null, selfSweep = null;
+  const others = new Map(); // publicId -> { circle, sweep }
+
+  /* ---- privacy masking: uniform-by-area point within 50 m ---- */
+  function maskLocation(lat, lng, maxMeters) {
+    maxMeters = maxMeters || MASK_RADIUS_METERS;
+    const dist = maxMeters * Math.sqrt(Math.random());
+    const theta = Math.random() * 2 * Math.PI;
+    const dNorth = dist * Math.cos(theta);
+    const dEast = dist * Math.sin(theta);
+    const dLat = dNorth / 111320;
+    const mPerDegLng = 111320 * Math.cos((lat * Math.PI) / 180);
+    const dLng = mPerDegLng > 1e-9 ? dEast / mPerDegLng : 0;
+    return { lat: lat + dLat, lng: lng + dLng };
+  }
+
+  function loadScript(src) {
+    return new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = src; s.async = true; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  function loadCss(href) {
+    return new Promise((res) => {
+      const l = document.createElement('link');
+      l.rel = 'stylesheet'; l.href = href; l.onload = res; l.onerror = res;
+      document.head.appendChild(l);
+    });
+  }
+  function ensureLibs() {
+    if (libsPromise) return libsPromise;
+    libsPromise = (async () => {
+      await loadCss(LEAFLET_CSS);
+      await loadScript(LEAFLET_JS);
+      if (SERVER_URL) { try { await loadScript(SOCKET_JS); } catch (e) { /* solo */ } }
+    })();
+    return libsPromise;
+  }
+
+  function setStatus(state, text) {
+    statusPill.className = 'lm-status ' + state;
+    statusText.textContent = text;
+  }
+  function setHint(msg, isError) {
+    hintEl.textContent = msg || '';
+    hintEl.classList.toggle('error', !!isError);
+  }
+  function tickLast() {
+    if (lastUpdateAt == null) { lastEl.innerHTML = '&mdash;'; return; }
+    const s = Math.max(0, Math.floor((Date.now() - lastUpdateAt) / 1000));
+    lastEl.textContent = s < 60 ? s + 's ago' : Math.floor(s / 60) + 'm ' + (s % 60) + 's ago';
+  }
+
+  function buildCircle(lat, lng, isSelf) {
+    const fill = L.circle([lat, lng], {
+      radius: PUBLIC_RADIUS_METERS, className: 'privacy-circle',
+      color: '#F5C518', fillColor: '#F5C518', fillOpacity: isSelf ? 0.16 : 0.1, weight: 2
+    });
+    const sweep = L.circle([lat, lng], {
+      radius: PUBLIC_RADIUS_METERS, className: 'radar-sweep',
+      color: '#F5C518', fill: false, weight: 3, dashArray: '14 22'
+    });
+    return { fill, sweep };
+  }
+
+  function renderSelf(masked) {
+    selfPublic = masked;
+    if (selfCircle) { map.removeLayer(selfCircle); map.removeLayer(selfSweep); }
+    const c = buildCircle(masked.lat, masked.lng, true);
+    selfCircle = c.fill.addTo(map); selfSweep = c.sweep.addTo(map);
+  }
+  function renderExactDot(loc) {
+    if (selfDot) map.removeLayer(selfDot);
+    selfDot = L.circleMarker([loc.lat, loc.lng], {
+      radius: 7, className: 'self-dot', color: '#ffffff', weight: 2,
+      fillColor: '#2f7bff', fillOpacity: 1
+    }).addTo(map).bindTooltip('Your exact location (private)', { direction: 'top', offset: [0, -8] });
+  }
+  function upsertOther(rec) {
+    if (rec.publicId === selfId) return;
+    const existing = others.get(rec.publicId);
+    if (existing) {
+      existing.circle.setLatLng([rec.lat, rec.lng]);
+      existing.sweep.setLatLng([rec.lat, rec.lng]);
+    } else {
+      const c = buildCircle(rec.lat, rec.lng, false);
+      c.fill.addTo(map); c.sweep.addTo(map);
+      others.set(rec.publicId, c);
+    }
+    othersEl.textContent = String(others.size);
+  }
+  function removeOther(publicId) {
+    const o = others.get(publicId);
+    if (o) { map.removeLayer(o.circle); map.removeLayer(o.sweep); others.delete(publicId); }
+    othersEl.textContent = String(others.size);
+  }
+
+  function connect() {
+    if (!SERVER_URL || typeof io === 'undefined') {
+      setStatus('solo', 'Solo (private)');
+      return;
+    }
+    setStatus('connecting', 'Connecting…');
+    socket = io(SERVER_URL, { transports: ['websocket'], autoConnect: true });
+    socket.on('connect', () => setStatus('live', 'Live'));
+    socket.on('disconnect', () => setStatus('offline', 'Offline'));
+    socket.io.on('reconnect_attempt', () => setStatus('connecting', 'Connecting…'));
+    socket.on('connect_error', () => setStatus('offline', 'Offline'));
+    socket.on('presence:self', (d) => { selfId = d.publicId; });
+    socket.on('presence:init', (recs) => { recs.forEach(upsertOther); });
+    socket.on('presence:upsert', upsertOther);
+    socket.on('presence:remove', (d) => removeOther(d.publicId));
+    socket.on('error:notice', (n) => setHint(n.message, true));
+  }
+
+  /* ---- publish: mask locally, broadcast only the masked center ---- */
+  function publish(loc) {
+    exact = loc;
+    renderExactDot(loc);
+    const masked = maskLocation(loc.lat, loc.lng);
+    renderSelf(masked);
+    map.setView([loc.lat, loc.lng], Math.max(map.getZoom(), 16), { animate: true });
+    lastUpdateAt = Date.now(); tickLast();
+    sharingEl.textContent = 'Sharing';
+    statusBox.classList.add('sharing');
+    actionsEl.hidden = false;
+    setHint('');
+    if (socket && socket.connected) socket.emit('location:update', masked);
+  }
+
+  function stopSharing() {
+    if (socket && socket.connected) socket.emit('location:stop');
+    if (selfCircle) { map.removeLayer(selfCircle); map.removeLayer(selfSweep); selfCircle = selfSweep = null; }
+    if (selfDot) { map.removeLayer(selfDot); selfDot = null; }
+    selfPublic = null; exact = null; lastSource = null; lastUpdateAt = null;
+    sharingEl.textContent = 'Not sharing';
+    statusBox.classList.remove('sharing');
+    actionsEl.hidden = true;
+    tickLast();
+  }
+
+  function confirmSensitive() {
+    if (acked) return true;
+    const ok = window.confirm(
+      'Others will see an approximate 200 m area, not your exact position.\n\n' +
+      'Please think twice before sharing from a sensitive place such as your home, ' +
+      'school, workplace, a shelter, or a medical facility.\n\nContinue?'
+    );
+    if (ok) acked = true;
+    return ok;
+  }
+
+  function shareGps() {
+    if (!confirmSensitive()) return;
+    if (!('geolocation' in navigator)) { setHint('Geolocation is not supported here. Try an address.', true); return; }
+    setHint('Requesting location permission…');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => { lastSource = { kind: 'gps' }; publish({ lat: pos.coords.latitude, lng: pos.coords.longitude }); },
+      (err) => setHint(err.code === err.PERMISSION_DENIED
+        ? 'Permission denied. Try entering an address instead.'
+        : 'Could not get your location. Try entering an address.', true),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  async function shareAddress(value) {
+    const q = (value || '').trim();
+    if (!q) return;
+    if (!confirmSensitive()) return;
+    setHint('Looking up address…');
+    try {
+      const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=' + encodeURIComponent(q);
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error('geocode');
+      const data = await res.json();
+      if (!data.length) { setHint('No match found for that address.', true); return; }
+      lastSource = { kind: 'address', address: q };
+      publish({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) });
+    } catch (e) { setHint('Address lookup failed. Please try again.', true); }
+  }
+
+  async function initMap() {
+    if (inited) { map.invalidateSize(); return; }
+    await ensureLibs();
+    map = L.map('lmMap', { zoomControl: true, attributionControl: true }).setView(DEFAULT_CENTER, 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    inited = true;
+    setTimeout(() => map.invalidateSize(), 80);
+    connect();
+    lastTimer = setInterval(tickLast, 1000);
+  }
+
+  function openMap(e) {
+    if (e) e.preventDefault();
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    initMap();
+  }
+  function closeMap() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.js-livemap').forEach((el) => el.addEventListener('click', openMap));
+  closeBtn.addEventListener('click', closeMap);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeMap(); });
+  shareBtn.addEventListener('click', shareGps);
+  addrForm.addEventListener('submit', (e) => { e.preventDefault(); shareAddress(addrInput.value); });
+  updateBtn.addEventListener('click', () => {
+    if (lastSource && lastSource.kind === 'gps') shareGps();
+    else if (lastSource && lastSource.kind === 'address') shareAddress(lastSource.address);
+  });
+  stopBtn.addEventListener('click', stopSharing);
+
+  // Deep-link support: open the map if the page loads with #livemap.
+  if (location.hash === '#livemap') openMap();
+})();
 </script>
 </body>
 </html>
