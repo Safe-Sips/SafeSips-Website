@@ -1034,8 +1034,8 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
     <form id="wlForm" novalidate>
       <input type="text" id="wlName" name="name" placeholder="Your name (optional)" autocomplete="name">
       <input type="email" id="wlEmail" name="email" placeholder="you@email.com" autocomplete="email" required>
-      <!-- honeypot: hidden from humans, bots tend to fill it -->
-      <input type="text" id="wlCompany" name="company" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <!-- honeypot: hidden from humans, bots tend to fill it (avoid name=company — browsers autofill it) -->
+      <input type="text" id="wlBotcheck" name="botcheck" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button type="submit" class="wl-submit" id="wlSubmit">Join the Waitlist ✦</button>
       <p class="wl-msg" id="wlMsg" role="status" aria-live="polite"></p>
     </form>
@@ -1460,7 +1460,7 @@ if (statsSection) {
   const form = document.getElementById('wlForm');
   const nameEl = document.getElementById('wlName');
   const emailEl = document.getElementById('wlEmail');
-  const honeypot = document.getElementById('wlCompany');
+  const honeypot = document.getElementById('wlBotcheck');
   const submitBtn = document.getElementById('wlSubmit');
   const msgEl = document.getElementById('wlMsg');
   let lastFocus = null;
@@ -1522,15 +1522,34 @@ if (statsSection) {
     submitBtn.textContent = 'Joining…';
     setMsg('');
 
-    const payload = { email, name, source: 'safesips-website', ua: navigator.userAgent };
+    const payload = {
+      email,
+      name,
+      source: 'safesips-website',
+      ua: navigator.userAgent,
+      botcheck: honeypot ? honeypot.value : ''
+    };
     let result;
     try {
       // No custom headers => "simple" request => no CORS preflight.
       const res = await fetch(WAITLIST_ENDPOINT, { method: 'POST', body: JSON.stringify(payload) });
+      if (!res.ok) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Join the Waitlist ✦';
+        setMsg(
+          res.status === 401
+            ? 'Sign-up is temporarily unavailable. Please email jamld2135@gmail.com and we will add you manually.'
+            : 'Something went wrong. Please try again.',
+          'error'
+        );
+        return;
+      }
       result = await res.json();
     } catch (err) {
-      // Response may be unreadable cross-origin even though the write succeeded.
-      result = { ok: true, optimistic: true };
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join the Waitlist ✦';
+      setMsg('Could not reach the waitlist server. Check your connection and try again.', 'error');
+      return;
     }
 
     if (result && result.ok) {

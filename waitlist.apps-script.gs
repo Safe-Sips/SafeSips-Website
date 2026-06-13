@@ -50,7 +50,7 @@ function doPost(e) {
     Logger.log('doPost received: email=%s source=%s', email, String(data.source || 'website'));
 
     // Honeypot: bots fill hidden fields; humans never do.
-    if (String(data.company || '').trim() !== '') {
+    if (String(data.botcheck || data.company || '').trim() !== '') {
       return json({ ok: true }); // silently accept, store nothing
     }
     if (!EMAIL_RE.test(email)) {
@@ -131,7 +131,7 @@ function getSheet() {
 function emailExists(sheet, email) {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
-  const emails = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+  const emails = sheet.getRange('B2:B' + lastRow).getValues();
   for (let i = 0; i < emails.length; i++) {
     if (String(emails[i][0]).trim().toLowerCase() === email) return true;
   }
