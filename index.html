@@ -1457,6 +1457,28 @@ if (statsSection) {
   const GEOCODE_TIMEOUT_MS = 10000;
   const MAX_ADDRESS_LENGTH = 500;
 
+  function formatShortAddressLabel(hit) {
+    const addr = hit.address || {};
+    const placeFromAddress = [
+      'amenity', 'shop', 'tourism', 'leisure', 'building', 'historic',
+      'office', 'craft', 'healthcare', 'place_of_worship', 'railway', 'aeroway', 'man_made',
+    ].map((key) => (addr[key] || '').trim()).find(Boolean);
+    const place = (hit.name || '').trim() || placeFromAddress;
+    const street = (addr.road || addr.pedestrian || addr.footway || addr.street || addr.residential || addr.path || '').trim();
+    const city = (addr.city || addr.town || addr.village || addr.municipality || addr.city_district || '').trim();
+    const parts = [];
+    const add = (part) => {
+      if (!part) return;
+      if (parts.some((existing) => existing.toLowerCase() === part.toLowerCase())) return;
+      parts.push(part);
+    };
+    add(place);
+    add(street);
+    add(city);
+    if (parts.length) return parts.join(', ');
+    return hit.display_name.split(',').slice(0, 3).map((segment) => segment.trim()).filter(Boolean).join(', ');
+  }
+
   async function geocodeAddress(query) {
     const q = (query || '').trim();
     if (!q) return null;
@@ -1532,7 +1554,7 @@ if (statsSection) {
     const q = (query || '').trim();
     if (q.length < MIN_SUGGEST_LENGTH) return [];
     if (q.length > MAX_ADDRESS_LENGTH) return [];
-    const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&addressdetails=0&q=' + encodeURIComponent(q);
+    const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&addressdetails=1&q=' + encodeURIComponent(q);
     if (suggestAbort) suggestAbort.abort();
     suggestAbort = new AbortController();
     const timeoutId = setTimeout(() => suggestAbort.abort(), GEOCODE_TIMEOUT_MS);
@@ -1548,7 +1570,7 @@ if (statsSection) {
           const lat = parseFloat(hit.lat);
           const lng = parseFloat(hit.lon);
           if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-          return { lat, lng, displayName: hit.display_name };
+          return { lat, lng, displayName: formatShortAddressLabel(hit) };
         })
         .filter(Boolean);
     } finally {
