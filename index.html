@@ -323,6 +323,17 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
 .footer-col h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: rgba(255,255,255,.46); letter-spacing: 2px; margin-bottom: 16px; }
 .footer-col a { display: block; text-decoration: none; color: rgba(255,255,255,.44); font-size: .86rem; margin-bottom: 10px; transition: color .2s; font-weight: 600; }
 .footer-col a:hover { color: var(--pink); }
+.footer-col button.footer-link-btn {
+  display: block; background: none; border: none; padding: 0; text-align: left;
+  color: rgba(255,255,255,.44); font-size: .86rem; margin-bottom: 10px; transition: color .2s;
+  font-weight: 600; font-family: inherit; cursor: pointer;
+}
+.footer-col button.footer-link-btn:hover { color: var(--pink); }
+.footer-emergency {
+  width: 100%; font-size: .78rem; line-height: 1.55; color: rgba(255,255,255,.42);
+  margin-top: 8px; max-width: 720px;
+}
+.footer-emergency strong { color: rgba(255,255,255,.72); }
 .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 26px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .footer-bottom p { font-size: .82rem; }
 .footer-bottom span { color: var(--pink); }
@@ -452,6 +463,17 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
 .lm-actions { display: flex; gap: 8px; margin-top: 10px; }
 .lm-note { font-size: .76rem; color: rgba(255,255,255,.62); line-height: 1.55; margin-top: 14px; }
 .lm-note strong { color: var(--gold); }
+.lm-legal {
+  margin-top: 12px; font-size: .72rem; line-height: 1.5; color: rgba(255,255,255,.55);
+}
+.lm-legal button {
+  background: none; border: none; padding: 0; color: var(--gold); font: inherit; font-size: inherit;
+  font-weight: 800; cursor: pointer; text-decoration: underline;
+}
+.lm-emergency {
+  margin-top: 8px; font-size: .72rem; line-height: 1.45; color: rgba(255,255,255,.5);
+}
+.lm-emergency strong { color: #ff7591; }
 .lm-legend { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; font-size: .76rem; color: rgba(255,255,255,.66); }
 .lm-legend span { display: flex; align-items: center; gap: 8px; }
 .lm-sw { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
@@ -525,6 +547,15 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
 .wl-msg.success { color: #1a9d5a; font-weight: 700; }
 .wl-msg.error { color: #d63; font-weight: 700; }
 .wl-fine { font-size: .74rem; color: #8a8aa0; line-height: 1.5; margin-top: 18px; text-align: center; }
+.wl-fine button {
+  background: none; border: none; padding: 0; color: var(--pink); font: inherit; font-size: inherit;
+  font-weight: 700; cursor: pointer; text-decoration: underline;
+}
+.legal-body {
+  max-height: min(52vh, 420px); overflow-y: auto; font-size: .88rem; line-height: 1.6;
+  color: #4a4a6a; white-space: pre-wrap; margin-bottom: 8px;
+}
+.legal-body p { margin-bottom: 10px; }
 @media (prefers-reduced-motion: reduce) {
   .wl-backdrop.open, .wl-card { animation: none; }
 }
@@ -1009,15 +1040,21 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
           <a href="#">Research Paper</a>
         </div>
         <div class="footer-col">
+          <h4>Legal</h4>
+          <button type="button" class="footer-link-btn js-legal" data-legal="privacy">Privacy Policy</button>
+          <button type="button" class="footer-link-btn js-legal" data-legal="terms">Terms of Service</button>
+        </div>
+        <div class="footer-col">
           <h4>Contact</h4>
           <a href="https://www.instagram.com/safesipss/" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="mailto:support@safesips.app">support@safesips.app</a>
           <a href="mailto:jamld2135@gmail.com">Email Us</a>
-          <a href="#">Press</a>
         </div>
       </div>
     </div>
+    <p class="footer-emergency"><strong>SafeSips is not an emergency service.</strong> In an emergency, call <strong>112</strong> (Romania) or your local emergency number.</p>
     <div class="footer-bottom">
-      <p>© 2025 <span>SafeSips</span> · Your best party friend · Made with care for Romania</p>
+      <p>© 2026 <span>SafeSips</span> · Your best party friend · Made with care for Romania</p>
       <span class="footer-credits">Research · ICHB Bucharest</span>
     </div>
   </div>
@@ -1040,7 +1077,27 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
       <p class="wl-msg" id="wlMsg" role="status" aria-live="polite"></p>
     </form>
 
-    <p class="wl-fine">We only use your email to update you about SafeSips. No spam — unsubscribe anytime by replying.</p>
+    <p class="wl-fine">We only use your email to update you about SafeSips. See our <button type="button" class="js-legal" data-legal="privacy">Privacy Policy</button>. No spam — unsubscribe anytime by replying.</p>
+  </div>
+</div>
+
+<!-- ═══ LEGAL MODALS ═══ -->
+<div id="legalPrivacy" class="wl-backdrop" aria-hidden="true">
+  <div class="wl-card" role="dialog" aria-modal="true" aria-labelledby="legalPrivacyTitle">
+    <button class="wl-close js-legal-close" aria-label="Close">&times;</button>
+    <div class="wl-tag">Legal</div>
+    <h2 class="wl-title" id="legalPrivacyTitle">PRIVACY<br><span>POLICY</span></h2>
+    <div class="legal-body" id="legalPrivacyBody"></div>
+    <p class="wl-fine">Draft summary for transparency. Review with qualified counsel before relying on this for compliance.</p>
+  </div>
+</div>
+<div id="legalTerms" class="wl-backdrop" aria-hidden="true">
+  <div class="wl-card" role="dialog" aria-modal="true" aria-labelledby="legalTermsTitle">
+    <button class="wl-close js-legal-close" aria-label="Close">&times;</button>
+    <div class="wl-tag">Legal</div>
+    <h2 class="wl-title" id="legalTermsTitle">TERMS OF<br><span>SERVICE</span></h2>
+    <div class="legal-body" id="legalTermsBody"></div>
+    <p class="wl-fine">Draft summary — not legal advice. Consult qualified counsel before launch.</p>
   </div>
 </div>
 
@@ -1058,7 +1115,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
     <aside class="lm-panel">
       <button class="lm-btn lm-btn-primary" id="lmShare">Share My Location</button>
       <form class="lm-address" id="lmAddrForm">
-        <input id="lmAddr" type="text" placeholder="Enter your address" aria-label="Enter your address" autocomplete="off">
+        <input id="lmAddr" type="text" placeholder="Enter your address" aria-label="Enter your address" autocomplete="off" maxlength="500">
         <button class="lm-btn lm-btn-secondary" type="submit">Go</button>
       </form>
       <p class="lm-hint" id="lmHint"></p>
@@ -1072,6 +1129,12 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
         </div>
       </div>
       <p class="lm-note">Your precise location stays private. Others see only an approximate <strong>200&nbsp;m</strong> area centered on a randomized point.</p>
+      <p class="lm-emergency"><strong>Not an emergency service.</strong> Call <strong>112</strong> or <strong>911</strong> in an emergency.</p>
+      <p class="lm-legal">
+        <button type="button" class="js-legal" data-legal="privacy">Privacy Policy</button>
+        ·
+        <button type="button" class="js-legal" data-legal="terms">Terms of Service</button>
+      </p>
       <div class="lm-legend">
         <span><i class="lm-sw lm-sw-blue"></i> Your exact spot (only you)</span>
         <span><i class="lm-sw lm-sw-yellow"></i> Public 200&nbsp;m area</span>
@@ -1366,10 +1429,39 @@ if (statsSection) {
     const ok = window.confirm(
       'Others will see an approximate 200 m area, not your exact position.\n\n' +
       'Please think twice before sharing from a sensitive place such as your home, ' +
-      'school, workplace, a shelter, or a medical facility.\n\nContinue?'
+      'school, workplace, a shelter, or a medical facility.\n\n' +
+      'SafeSips is NOT an emergency service. Call 112 or 911 in an emergency.\n\nContinue?'
     );
     if (ok) acked = true;
     return ok;
+  }
+
+  const NOMINATIM_UA = 'SafeSips/1.0 (privacy-preserving location sharing; contact: support@safesips.app)';
+  const GEOCODE_TIMEOUT_MS = 10000;
+  const MAX_ADDRESS_LENGTH = 500;
+
+  async function geocodeAddress(query) {
+    const q = (query || '').trim();
+    if (!q) return null;
+    if (q.length > MAX_ADDRESS_LENGTH) throw new Error('too_long');
+    const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=' + encodeURIComponent(q);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), GEOCODE_TIMEOUT_MS);
+    try {
+      const res = await fetch(url, {
+        signal: controller.signal,
+        headers: { Accept: 'application/json', 'User-Agent': NOMINATIM_UA },
+      });
+      if (!res.ok) throw new Error('geocode');
+      const data = await res.json();
+      if (!data.length) return null;
+      const lat = parseFloat(data[0].lat);
+      const lng = parseFloat(data[0].lon);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) throw new Error('invalid');
+      return { lat, lng };
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   function shareGps() {
@@ -1391,14 +1483,15 @@ if (statsSection) {
     if (!confirmSensitive()) return;
     setHint('Looking up address…');
     try {
-      const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=' + encodeURIComponent(q);
-      const res = await fetch(url, { headers: { Accept: 'application/json' } });
-      if (!res.ok) throw new Error('geocode');
-      const data = await res.json();
-      if (!data.length) { setHint('No match found for that address.', true); return; }
+      const loc = await geocodeAddress(q);
+      if (!loc) { setHint('No match found for that address.', true); return; }
       lastSource = { kind: 'address', address: q };
-      publish({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) });
-    } catch (e) { setHint('Address lookup failed. Please try again.', true); }
+      publish(loc);
+    } catch (e) {
+      setHint(e && e.message === 'too_long'
+        ? 'Address is too long.'
+        : 'Address lookup failed. Please try again.', true);
+    }
   }
 
   async function initMap() {
@@ -1568,6 +1661,132 @@ if (statsSection) {
       submitBtn.textContent = 'Join the Waitlist ✦';
       setMsg('Something went wrong. Please try again.', 'error');
     }
+  });
+})();
+</script>
+
+<script>
+/* Legal — Privacy Policy & Terms (draft summaries) */
+(function () {
+  const PRIVACY = `Privacy Policy (Summary)
+
+Last updated: June 2026
+
+SafeSips ("we", "us") provides a real-time map that lets you share an approximate location area while keeping your exact position on your device.
+
+What we process
+• Masked location only: clients send a randomized center point within ~50 m of your true location. Exact GPS coordinates are not transmitted to our servers.
+• Anonymous session id: a random public id is assigned per connection so others can see your circle without knowing who you are.
+• Timestamps: when your shared area was last updated and when it expires.
+
+What we do not collect
+• Your name, email, phone number, or account (unless you contact us separately or join the waitlist).
+• Your exact coordinates on our servers.
+• Persistent location history after you stop sharing or your session expires.
+
+Retention
+• Shared presence records are held in server memory only and are removed when you stop sharing, disconnect, or after a short inactivity timeout (default 60 seconds).
+
+Third-party services
+• OpenStreetMap map tiles and Nominatim geocoding may receive address queries or map tile requests from your device. See openstreetmap.org for their policies.
+• Our hosting provider processes network traffic necessary to operate the service.
+
+Your choices
+• You choose when to share and can stop at any time.
+• Location permission is requested by your browser or device OS and can be revoked in system settings.
+
+Children
+• SafeSips is not directed to children under 13. Do not use the service if you are under 13.
+
+Contact
+• Privacy questions: support@safesips.app
+
+This summary is provided for transparency. Deployments may require a jurisdiction-specific policy reviewed by qualified counsel.`;
+
+  const TERMS = `Terms of Service (Summary)
+
+Last updated: June 2026
+
+By using SafeSips you agree to these terms.
+
+Not an emergency service
+• SafeSips is NOT a substitute for emergency services (e.g., 112 in Romania, 911 elsewhere). In an emergency, contact local emergency services immediately.
+
+No professional advice
+• SafeSips does not provide medical, legal, security, or safety advice. Location masking reduces precision but does not guarantee anonymity or safety.
+
+Your responsibility
+• You are solely responsible for deciding whether, where, and when to share your approximate location.
+• Do not share from sensitive places (home, school, workplace, shelter, medical facilities) unless you accept the risk that others may infer your general area.
+
+Service provided "as is"
+• The service is provided without warranties of any kind, express or implied, including fitness for a particular purpose or non-infringement.
+• We do not guarantee uninterrupted, error-free, or secure operation.
+
+Limitation of liability
+• To the maximum extent permitted by law, Safe-Sips and its operators will not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, profits, or goodwill, arising from your use of the service.
+• Our total liability for any claim relating to the service is limited to the greater of (a) amounts you paid us in the twelve months before the claim, or (b) one hundred U.S. dollars (USD $100).
+
+Acceptable use
+• Do not use SafeSips to harass, stalk, endanger, or mislead others.
+• Do not attempt to deanonymize other users or disrupt the service.
+
+Changes
+• We may update these terms. Continued use after changes constitutes acceptance.
+
+Governing law
+• These terms are governed by the laws applicable to Safe-Sips unless mandatory local consumer protections require otherwise.
+
+Contact
+• Legal or support inquiries: support@safesips.app
+
+This summary is not legal advice. Consult qualified counsel before relying on it for compliance or litigation purposes.`;
+
+  const modals = {
+    privacy: { el: document.getElementById('legalPrivacy'), body: document.getElementById('legalPrivacyBody'), text: PRIVACY },
+    terms: { el: document.getElementById('legalTerms'), body: document.getElementById('legalTermsBody'), text: TERMS },
+  };
+
+  Object.values(modals).forEach((m) => { if (m.body) m.body.textContent = m.text; });
+
+  let openModal = null;
+
+  function openLegal(kind) {
+    const m = modals[kind];
+    if (!m || !m.el) return;
+    if (openModal) openModal.el.classList.remove('open');
+    openModal = m;
+    m.el.classList.add('open');
+    m.el.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLegal() {
+    if (!openModal) return;
+    openModal.el.classList.remove('open');
+    openModal.el.setAttribute('aria-hidden', 'true');
+    openModal = null;
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.js-legal').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openLegal(btn.getAttribute('data-legal'));
+    });
+  });
+
+  document.querySelectorAll('.js-legal-close').forEach((btn) => {
+    btn.addEventListener('click', closeLegal);
+  });
+
+  Object.values(modals).forEach((m) => {
+    if (!m.el) return;
+    m.el.addEventListener('click', (e) => { if (e.target === m.el) closeLegal(); });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && openModal) closeLegal();
   });
 })();
 </script>
