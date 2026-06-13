@@ -427,7 +427,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
 .leaflet-container { background: #05060a; font-family: 'Nunito', sans-serif; }
 
 .lm-panel {
-  position: absolute; z-index: 1000; top: 16px; left: 16px; width: min(360px, calc(100% - 32px));
+  position: absolute; z-index: 1000; bottom: 16px; left: 16px; width: min(360px, calc(100% - 32px));
   background: rgba(0,31,63,.86); backdrop-filter: blur(14px);
   border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 18px;
   box-shadow: 0 20px 60px rgba(0,0,0,.45);
@@ -494,7 +494,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   #livemap .privacy-circle, #livemap .radar-sweep, .nav-live-dot { animation: none; }
 }
 @media (max-width: 560px) {
-  .lm-panel { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 60vh; overflow-y: auto; }
+  .lm-panel { bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 60vh; overflow-y: auto; }
   .lm-title { font-size: 1.3rem; }
 }
 
