@@ -32,8 +32,6 @@ body { background: var(--lavender); font-family: 'Nunito', sans-serif; overflow-
 /* ── BLOB ── */
 .blob { position: absolute; border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; pointer-events: none; z-index: 0; animation: blobIn 1.6s ease .15s both; }
 @keyframes blobIn { from { opacity: 0; } }
-.hero-squiggle { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; animation: squiggleIn 2s ease .25s both; }
-@keyframes squiggleIn { from { opacity: 0; } }
 
 /* ── NAV ── */
 #navbar {
@@ -256,6 +254,109 @@ section { position: relative; padding: 100px 6vw; overflow: hidden; }
 .ch-check { width: 20px; height: 20px; background: var(--pink); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .ch-check svg { width: 11px; height: 11px; stroke: #fff; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
+/* ════════════════════════════════════════════════════════════════
+   HOW IT WORKS — emoji flower garland scroll animation  (prefix: .fl-)
+   Flowers BLOOM IN on scroll (scale + fade, staggered), then gently
+   SWAY forever so the garland feels alive. The card stays STATIONARY.
+   Two nested spans: .fl-flower = position + bloom (scale/opacity),
+   .fl-em = the emoji glyph + idle sway — independent transforms, so the
+   one-shot bloom and the looping sway never fight. Trigger: .fl-bloomed;
+   reduced-motion snaps to a still bloomed frame (no pop, no sway).
+   ════════════════════════════════════════════════════════════════ */
+.fl-stage {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Flower layer sits IN FRONT of the card edges (z-index:3) so the garland
+   frames/overlaps the card like the reference. pointer-events:none keeps
+   the card fully interactive underneath. Top bleed kept tight so the top
+   flowers hug the card edge. */
+.fl-layer {
+  position: absolute;
+  inset: -52px -46px -54px -68px;   /* top kept tight; extra room left + bottom */
+  z-index: 3;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Card stays put — just give it a stacking position. */
+.fl-stage .ch-card {
+  position: relative;
+  z-index: 2;
+}
+
+/* outer span — positions the flower and plays the bloom-in (scale + fade) */
+.fl-flower {
+  position: absolute;
+  left: var(--x, 50%);
+  top: var(--y, 50%);
+  font-size: var(--sz, 46px);
+  line-height: 1;
+  transform: translate(-50%, -50%) scale(0) rotate(var(--rot, 0deg));
+  transform-origin: 50% 50%;
+  opacity: 0;
+  will-change: transform, opacity;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* inner span — the emoji glyph + the perpetual idle sway */
+.fl-em {
+  display: inline-block;
+  transform-origin: 50% 65%;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  filter: drop-shadow(0 4px 8px rgba(0,31,63,.14));
+}
+
+.fl-stage.fl-bloomed .fl-flower {
+  animation: flPop .7s cubic-bezier(.34,1.56,.5,1) var(--d, 0s) both;
+}
+@keyframes flPop {
+  0%   { opacity: 0; transform: translate(-50%,-50%) scale(0)    rotate(var(--rot,0deg)); }
+  60%  { opacity: 1; transform: translate(-50%,-50%) scale(1.18) rotate(var(--rot,0deg)); }
+  100% { opacity: 1; transform: translate(-50%,-50%) scale(1)    rotate(var(--rot,0deg)); }
+}
+
+/* idle sway — begins once bloomed; negative delay desyncs each flower so
+   the garland breathes rather than marching in lockstep */
+.fl-stage.fl-bloomed .fl-em {
+  animation: flSway var(--sway, 3.6s) ease-in-out infinite;
+  animation-delay: calc(var(--d, 0s) * -1.7);
+}
+@keyframes flSway {
+  0%   { transform: rotate(0deg)    translateY(0); }
+  25%  { transform: rotate(2.5deg)  translateY(-2px); }
+  50%  { transform: rotate(0deg)    translateY(0); }
+  75%  { transform: rotate(-2.5deg) translateY(-1px); }
+  100% { transform: rotate(0deg)    translateY(0); }
+}
+
+/* ════ REDUCED MOTION · snap straight to a still bloomed frame ════ */
+@media (prefers-reduced-motion: reduce) {
+  .fl-flower,
+  .fl-stage.fl-bloomed .fl-flower {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%,-50%) scale(1) rotate(var(--rot,0deg));
+  }
+  .fl-em,
+  .fl-stage.fl-bloomed .fl-em { animation: none; transform: none; }
+}
+
+/* ════ MOBILE · card full-width (768px) — scale flowers, clip bleed ═
+   body already has overflow-x:hidden; layer clip stops sideways scroll. */
+@media (max-width: 768px) {
+  .fl-stage { max-width: 100%; }
+  .fl-layer { inset: -44px 0 -40px 0; overflow: hidden; border-radius: 34px; }
+  .fl-flower { font-size: calc(var(--sz, 46px) * .72); }
+}
+@media (max-width: 480px) {
+  .fl-flower { font-size: calc(var(--sz, 46px) * .6); }
+}
+
 /* ── APP ── */
 #app { background: var(--lavender); }
 .app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-top: 54px; }
@@ -314,8 +415,10 @@ section { position: relative; padding: 100px 6vw; overflow: hidden; }
   color: rgba(255,255,255,.065); white-space: nowrap; letter-spacing: 10px;
   pointer-events: none; user-select: none; z-index: 0;
 }
-#cta::before { content: ''; position: absolute; width: 640px; height: 640px; border-radius: 50%; background: rgba(255,255,255,.07); top: -240px; right: -220px; pointer-events: none; z-index: 0; }
-#cta::after { content: ''; position: absolute; width: 480px; height: 480px; border-radius: 50%; background: rgba(0,0,0,.055); bottom: -180px; left: -140px; pointer-events: none; z-index: 0; }
+/* soft corner glows: contained, low-alpha, heavily blurred radial gradients — no gradient stop and
+   no element edge lands inside the visible pink, so there's no round line / Mach-band ring and no seam */
+#cta::before { content: ''; position: absolute; top: 24px; right: -90px; width: 560px; height: 430px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.17), transparent 70%); filter: blur(48px); pointer-events: none; z-index: 0; }
+#cta::after { content: ''; position: absolute; bottom: 24px; left: -90px; width: 560px; height: 430px; border-radius: 50%; background: radial-gradient(circle, rgba(0,0,0,.08), transparent 70%); filter: blur(48px); pointer-events: none; z-index: 0; }
 #cta .stitle { color: #fff; font-size: clamp(3.2rem,6.5vw,7rem); max-width: 820px; margin: 0 auto 24px; position: relative; z-index: 1; }
 .cta-sub { color: rgba(255,255,255,.84); font-size: 1.08rem; max-width: 500px; margin: 0 auto 50px; line-height: 1.65; position: relative; z-index: 1; }
 .btn-cta { background: #fff; color: var(--pink); border: none; padding: 20px 54px; border-radius: 50px; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.08rem; cursor: pointer; transition: transform .22s, box-shadow .22s; box-shadow: 0 8px 34px rgba(0,0,0,.2); position: relative; z-index: 1; }
@@ -596,6 +699,76 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
 @media (max-width: 480px) {
   .wl-card { padding: 32px 22px 24px; border-radius: 22px; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   SECTION BACKGROUND DECOR  (The Problem + the Join-the-Waitlist CTA)
+   Purely decorative · pointer-events:none · auto-stilled by the
+   prefers-reduced-motion rule near the top of this stylesheet.
+   ════════════════════════════════════════════════════════════════ */
+.deco { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.deco > * { position: absolute; }
+
+/* keep section content above its decor layer */
+#problem .prob-inner,
+#cta > .reveal { position: relative; z-index: 1; }
+
+/* — drifting drink bubbles — */
+.bub {
+  border-radius: 50%; bottom: var(--bb, -40px); left: var(--bl, 50%);
+  width: var(--bs, 14px); height: var(--bs, 14px);
+  /* translucent bubble: bright top-left specular, soft secondary glint, and a bright rim
+     around a see-through centre — reads like a real soap / champagne bubble */
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255,255,255,.95) 0%, rgba(255,255,255,.35) 9%, transparent 22%),
+    radial-gradient(circle at 72% 74%, rgba(255,255,255,.45) 0%, transparent 26%),
+    radial-gradient(circle at 50% 50%, transparent 55%, rgba(255,255,255,.30) 84%, rgba(255,255,255,.05) 96%, transparent 100%);
+  box-shadow: inset 0 0 4px rgba(255,255,255,.35), 0 0 5px rgba(255,255,255,.20);
+  opacity: 0;
+  animation: bubRise var(--bd, 15s) linear infinite var(--bdl, 0s);
+}
+@keyframes bubRise {
+  0%   { opacity: 0;             transform: translate3d(0, 0, 0) scale(.5); }
+  12%  { opacity: var(--bo, .5); }
+  85%  { opacity: var(--bo, .5); }
+  /* keep drifting upward the whole time — fade out & gently expand while still moving, never parking */
+  100% { opacity: 0;             transform: translate3d(var(--bx, 18px), var(--rise, -380px), 0) scale(1.15); }
+}
+
+/* — twinkling sparkles — */
+.tw {
+  color: var(--tw-c, #fff); font-size: var(--ts, 12px); line-height: 1;
+  opacity: 0; text-shadow: 0 0 8px currentColor;
+  animation: twk var(--td, 3.6s) ease-in-out infinite var(--tdl, 0s);
+}
+@keyframes twk {
+  0%, 100% { opacity: 0; transform: scale(.3) rotate(0deg); }
+  50%      { opacity: var(--to, .85); transform: scale(1) rotate(160deg); }
+}
+
+/* — soft glow blobs: a radial gradient that fades fully to transparent,
+     so the edges dissolve and never show a hard clipped cut — */
+.dblob {
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--blob-c, rgba(255,255,255,.12)) 0%, transparent 68%);
+  filter: blur(22px);
+  animation: dblobFloat var(--gd, 16s) ease-in-out infinite var(--gdl, 0s);
+}
+@keyframes dblobFloat {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50%      { transform: translate(var(--gx, 24px), var(--gy, -20px)) scale(1.07); }
+}
+
+/* — faint detection rings (pen LED ping / map radar) — */
+.dring {
+  border-radius: 50%; border: 1.5px dashed var(--ring-c, rgba(255,255,255,.3));
+  width: var(--rs, 200px); height: var(--rs, 200px);
+  opacity: 0;
+  animation: dringPulse var(--rd, 7s) ease-in-out infinite var(--rdl, 0s);
+}
+@keyframes dringPulse {
+  0%, 100% { transform: scale(.82); opacity: .08; }
+  50%      { transform: scale(1.04); opacity: .2; }
+}
 </style>
 </head>
 <body>
@@ -633,24 +806,13 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   <div class="blob hb2"></div>
   <div class="blob hb4"></div>
 
-  <svg class="hero-squiggle" viewBox="0 0 1024 683" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <linearGradient id="sqGrad" x1="0" y1="0" x2="1024" y2="683" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#ffdcef"/><stop offset="0.5" stop-color="#ff8fc7"/><stop offset="1" stop-color="#ffc2e4"/>
-      </linearGradient>
-      <filter id="sqGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>
-    </defs>
-    <path d="M -40 140 C 150 50 300 95 345 205 C 378 288 268 300 300 378 C 330 448 440 430 458 348 C 474 276 392 252 438 232 C 514 198 580 280 600 384 C 622 492 512 520 556 596 C 598 668 770 686 940 656 C 1010 644 1052 628 1092 616" stroke="url(#sqGrad)" stroke-width="11" opacity="0.32" filter="url(#sqGlow)" stroke-linecap="round"/>
-    <path d="M -40 140 C 150 50 300 95 345 205 C 378 288 268 300 300 378 C 330 448 440 430 458 348 C 474 276 392 252 438 232 C 514 198 580 280 600 384 C 622 492 512 520 556 596 C 598 668 770 686 940 656 C 1010 644 1052 628 1092 616" stroke="url(#sqGrad)" stroke-width="2.6" opacity="0.95" stroke-linecap="round"/>
-  </svg>
-
-  <span class="flower" style="top:18%;left:42%;font-size:2rem;--fdelay:0s;opacity:.8" aria-hidden="true">🌸</span>
-  <span class="flower" style="top:73%;left:7%;font-size:1.5rem;--fdelay:1.2s;opacity:.72" aria-hidden="true">🌺</span>
-  <span class="flower" style="top:10%;left:9%;font-size:1.3rem;--fdelay:.6s;opacity:.72" aria-hidden="true">🌸</span>
-  <span class="flower" style="top:84%;left:46%;font-size:1.2rem;--fdelay:1.8s;opacity:.65" aria-hidden="true">🌸</span>
-  <span class="flower" style="top:31%;left:53%;font-size:1.4rem;--fdelay:.9s;opacity:.7" aria-hidden="true">🌺</span>
-  <span class="flower" style="top:6%;left:31%;font-size:1.1rem;--fdelay:1.5s;opacity:.7" aria-hidden="true">🌸</span>
-  <span class="flower" style="top:50%;left:46%;font-size:1.2rem;--fdelay:2.1s;opacity:.66" aria-hidden="true">🌺</span>
+  <span class="flower" style="top:14%;left:15%;font-size:2rem;--fdelay:0s;opacity:.8" aria-hidden="true">🌸</span>
+  <span class="flower" style="top:13%;left:58%;font-size:1.5rem;--fdelay:1.2s;opacity:.72" aria-hidden="true">🌺</span>
+  <span class="flower" style="top:38%;left:48%;font-size:1.3rem;--fdelay:.6s;opacity:.72" aria-hidden="true">🌸</span>
+  <span class="flower" style="top:55%;left:88%;font-size:1.4rem;--fdelay:.9s;opacity:.7" aria-hidden="true">🌺</span>
+  <span class="flower" style="top:70%;left:4%;font-size:1.2rem;--fdelay:2.1s;opacity:.66" aria-hidden="true">🌺</span>
+  <span class="flower" style="top:86%;left:50%;font-size:1.2rem;--fdelay:1.8s;opacity:.65" aria-hidden="true">🌸</span>
+  <span class="flower" style="top:88%;left:73%;font-size:1.1rem;--fdelay:1.5s;opacity:.7" aria-hidden="true">🌸</span>
 
   <!-- LEFT -->
   <div class="hero-left">
@@ -865,6 +1027,13 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
 
 <!-- ═══ THE PROBLEM ═══ -->
 <section id="problem">
+  <div class="deco" aria-hidden="true">
+    <span class="dblob" style="top:-40px;left:-60px;width:480px;height:440px;--blob-c:rgba(255,20,147,.18);--gd:20s;--gx:30px;--gy:18px"></span>
+    <span class="dblob" style="bottom:-60px;right:-50px;width:520px;height:460px;--blob-c:rgba(212,175,55,.14);--gd:24s;--gdl:3s;--gx:-26px;--gy:-22px"></span>
+    <!-- quiet protective "detection" rings instead of party bubbles — the content here is serious -->
+    <span class="dring" style="top:50%;left:50%;margin:-225px 0 0 -225px;--rs:450px;--ring-c:rgba(255,255,255,.16);--rd:9s"></span>
+    <span class="dring" style="top:50%;left:50%;margin:-150px 0 0 -150px;--rs:300px;--ring-c:rgba(255,20,147,.20);--rd:9s;--rdl:1.4s"></span>
+  </div>
   <div class="prob-inner">
     <p class="prob-eyebrow reveal">The Reality — Romania 2024</p>
     <div class="prob-quotes">
@@ -1004,6 +1173,52 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
     </div>
 
     <div class="how-vis reveal">
+      <!-- Emoji flower garland: positioning wrapper + .fl-bloomed trigger target -->
+      <div class="fl-stage">
+
+        <!-- ░░ FLOWER GARLAND — iOS emoji, blooms in on scroll then gently sways ░░
+             --x/--y position (% of layer), --sz font-size, --rot tilt,
+             --d bloom delay (also desyncs the sway), --sway idle-sway period.
+             Each emoji is wrapped in .fl-em so the sway never fights the bloom. -->
+        <div class="fl-layer" aria-hidden="true">
+          <!-- TOP garland, hugging the card's top edge, flowing left → right -->
+          <span class="fl-flower" style="--x:11%; --y:9%;  --sz:48px; --rot:-15deg; --d:.12s; --sway:3.6s"><span class="fl-em">🌸</span></span>
+          <span class="fl-flower" style="--x:19%; --y:6%;  --sz:34px; --rot:35deg;  --d:.20s; --sway:4.2s"><span class="fl-em">🌿</span></span>
+          <span class="fl-flower" style="--x:28%; --y:10%; --sz:46px; --rot:-8deg;  --d:.28s; --sway:3.3s"><span class="fl-em">🌻</span></span>
+          <span class="fl-flower" style="--x:39%; --y:6%;  --sz:50px; --rot:12deg;  --d:.36s; --sway:3.9s"><span class="fl-em">🌹</span></span>
+          <span class="fl-flower" style="--x:50%; --y:10%; --sz:42px; --rot:-6deg;  --d:.44s; --sway:4.4s"><span class="fl-em">🌷</span></span>
+          <span class="fl-flower" style="--x:61%; --y:6%;  --sz:40px; --rot:14deg;  --d:.52s; --sway:3.5s"><span class="fl-em">🌼</span></span>
+          <span class="fl-flower" style="--x:72%; --y:10%; --sz:44px; --rot:-12deg; --d:.60s; --sway:4.0s"><span class="fl-em">🌺</span></span>
+          <span class="fl-flower" style="--x:84%; --y:9%;  --sz:38px; --rot:16deg;  --d:.68s; --sway:3.7s"><span class="fl-em">🌸</span></span>
+
+          <!-- LEFT cluster (big + fuller), straddling the card's left edge -->
+          <span class="fl-flower" style="--x:11%; --y:21%; --sz:34px; --rot:-25deg; --d:.46s; --sway:4.1s"><span class="fl-em">🌿</span></span>
+          <span class="fl-flower" style="--x:14%; --y:33%; --sz:54px; --rot:8deg;   --d:.54s; --sway:3.4s"><span class="fl-em">🌹</span></span>
+          <span class="fl-flower" style="--x:8%;  --y:45%; --sz:42px; --rot:-18deg; --d:.62s; --sway:3.8s"><span class="fl-em">🌷</span></span>
+          <span class="fl-flower" style="--x:14%; --y:56%; --sz:48px; --rot:-14deg; --d:.70s; --sway:4.3s"><span class="fl-em">🌺</span></span>
+          <span class="fl-flower" style="--x:8%;  --y:66%; --sz:38px; --rot:20deg;  --d:.78s; --sway:3.6s"><span class="fl-em">🌼</span></span>
+          <span class="fl-flower" style="--x:15%; --y:77%; --sz:50px; --rot:-6deg;  --d:.86s; --sway:3.9s"><span class="fl-em">🌻</span></span>
+          <span class="fl-flower" style="--x:9%;  --y:87%; --sz:40px; --rot:12deg;  --d:.94s; --sway:3.3s"><span class="fl-em">🌸</span></span>
+
+          <!-- BOTTOM garland, hugging the lower edge (matched to the top spacing) -->
+          <span class="fl-flower" style="--x:25%; --y:90%; --sz:38px; --rot:10deg;  --d:.98s; --sway:4.0s"><span class="fl-em">🌸</span></span>
+          <span class="fl-flower" style="--x:39%; --y:92%; --sz:36px; --rot:-8deg;  --d:1.04s; --sway:3.5s"><span class="fl-em">🌷</span></span>
+          <span class="fl-flower" style="--x:53%; --y:91%; --sz:34px; --rot:12deg;  --d:1.10s; --sway:4.2s"><span class="fl-em">🌼</span></span>
+          <span class="fl-flower" style="--x:67%; --y:92%; --sz:40px; --rot:-10deg; --d:1.16s; --sway:3.7s"><span class="fl-em">🌺</span></span>
+          <span class="fl-flower" style="--x:82%; --y:90%; --sz:36px; --rot:18deg;  --d:1.22s; --sway:4.1s"><span class="fl-em">🌸</span></span>
+
+          <!-- RIGHT edge accents (fuller — balances the left cluster) -->
+          <span class="fl-flower" style="--x:95%; --y:15%; --sz:36px; --rot:-14deg; --d:.70s; --sway:3.6s"><span class="fl-em">🌸</span></span>
+          <span class="fl-flower" style="--x:93%; --y:28%; --sz:32px; --rot:25deg;  --d:.64s; --sway:4.4s"><span class="fl-em">🌿</span></span>
+          <span class="fl-flower" style="--x:92%; --y:35%; --sz:34px; --rot:14deg;  --d:.76s; --sway:3.9s"><span class="fl-em">🌹</span></span>
+          <span class="fl-flower" style="--x:95%; --y:42%; --sz:40px; --rot:8deg;   --d:.72s; --sway:3.4s"><span class="fl-em">🌼</span></span>
+          <span class="fl-flower" style="--x:96%; --y:51%; --sz:38px; --rot:-10deg; --d:.86s; --sway:4.2s"><span class="fl-em">🌷</span></span>
+          <span class="fl-flower" style="--x:94%; --y:60%; --sz:42px; --rot:-12deg; --d:.82s; --sway:3.8s"><span class="fl-em">🌺</span></span>
+          <span class="fl-flower" style="--x:92%; --y:68%; --sz:34px; --rot:16deg;  --d:.94s; --sway:3.5s"><span class="fl-em">🌸</span></span>
+          <span class="fl-flower" style="--x:94%; --y:74%; --sz:38px; --rot:14deg;  --d:.90s; --sway:4.1s"><span class="fl-em">🌷</span></span>
+          <span class="fl-flower" style="--x:90%; --y:86%; --sz:34px; --rot:-18deg; --d:.98s; --sway:3.5s"><span class="fl-em">🌼</span></span>
+        </div>
+
       <div class="ch-card">
         <div class="ch-title">3-Channel Sensor System</div>
         <div class="ch-subtitle">Each channel targets a different drug class</div>
@@ -1046,6 +1261,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
           </div>
         </div>
       </div>
+      </div><!-- /.fl-stage -->
     </div>
   </div>
 </section>
@@ -1164,6 +1380,16 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
 
 <!-- ═══ CTA ═══ -->
 <section id="cta" style="background:var(--pink)">
+  <div class="deco" aria-hidden="true">
+    <span class="bub" style="--bl:10%;--bs:20px;--bd:15s;--rise:-520px;--bx:24px;--bo:.5"></span>
+    <span class="bub" style="--bl:24%;--bs:13px;--bd:19s;--bdl:4s;--rise:-560px;--bx:-16px;--bo:.42"></span>
+    <span class="bub" style="--bl:74%;--bs:18px;--bd:17s;--bdl:6s;--rise:-540px;--bx:18px;--bo:.5"></span>
+    <span class="bub" style="--bl:90%;--bs:14px;--bd:21s;--bdl:2s;--rise:-580px;--bx:-20px;--bo:.44"></span>
+    <span class="tw" style="top:20%;left:16%;--ts:19px;--tw-c:#fff;--td:3.6s;--to:.9">✦</span>
+    <span class="tw" style="top:24%;right:18%;--ts:16px;--tw-c:#fff;--td:4.2s;--tdl:1s;--to:.8">✧</span>
+    <span class="tw" style="bottom:24%;left:24%;--ts:17px;--tw-c:#fff;--td:3.9s;--tdl:1.8s;--to:.85">✦</span>
+    <span class="tw" style="bottom:28%;right:22%;--ts:15px;--tw-c:#fff;--td:4.4s;--tdl:.6s;--to:.8">✦</span>
+  </div>
   <div class="cta-bg-text" aria-hidden="true">SAFE</div>
   <div class="reveal">
     <h2 class="stitle">SAFETY IN<br>YOUR POCKET</h2>
@@ -1333,6 +1559,18 @@ const ro = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); } });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+// HOW IT WORKS — sakura bloom trigger (play-once). Adds .fl-bloomed to the
+// wrapper; CSS animation-delays drive the staged frames. Reduced-motion in CSS.
+const flStage = document.querySelector('.how-vis .fl-stage');
+if (flStage) {
+  new IntersectionObserver(([e], obs) => {
+    if (e.isIntersecting) {
+      flStage.classList.add('fl-bloomed');
+      obs.unobserve(e.target);
+    }
+  }, { threshold: 0.2 }).observe(flStage);
+}
 
 // Problem quotes stagger
 const probQuotes = document.querySelectorAll('.prob-q');
