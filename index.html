@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SafeSips — Your Best Party Friend</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Baloo+2:wght@600;700;800&family=Fredoka:wght@400;500;600;700&family=Lilita+One&family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
 <style>
 :root {
   --lavender: #B8C5D6;
@@ -173,6 +173,9 @@ body { background: var(--lavender); font-family: 'Nunito', sans-serif; overflow-
 /* ── WAVE DIVIDERS ── */
 .wave-div { display: block; width: 100%; line-height: 0; pointer-events: none; overflow: hidden; }
 .wave-div svg { display: block; width: 100%; }
+/* curved white line between the two navy sections (problem → friends) */
+.wave-line { display: block; width: 100%; line-height: 0; pointer-events: none; background: var(--navy); }
+.wave-line svg { display: block; width: 100%; height: 80px; }
 
 /* ── SHARED SECTION ── */
 section { position: relative; padding: 100px 6vw; overflow: hidden; }
@@ -181,7 +184,7 @@ section { position: relative; padding: 100px 6vw; overflow: hidden; }
 .stitle .pk { color: var(--pink); }
 
 /* ── PROBLEM SECTION ── */
-#problem { background: var(--navy); padding: 96px 6vw; }
+#problem { background: var(--navy); padding: 96px 6vw 44px; }
 .prob-inner { max-width: 900px; margin: 0 auto; text-align: center; }
 .prob-eyebrow { font-size: .78rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 48px; opacity: .85; }
 .prob-quotes { display: flex; flex-direction: column; gap: 40px; }
@@ -197,17 +200,95 @@ section { position: relative; padding: 100px 6vw; overflow: hidden; }
 .prob-cta-line strong { color: rgba(255,255,255,.88); font-style: normal; font-family: 'Nunito', sans-serif; font-weight: 800; }
 
 /* ── FRIENDS ── */
-#friends { background: var(--navy); padding: 60px 6vw 100px; }
-#friends .stitle { color: #fff; }
-#friends .tag { background: var(--gold); color: var(--navy); }
-.f-sub { color: rgba(255,255,255,.62); font-size: 1.02rem; max-width: 480px; line-height: 1.75; margin-bottom: 56px; }
-.f-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 20px; }
-.f-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 24px; padding: 32px 24px 28px; transition: transform .3s, background .3s, border-color .3s; cursor: default; backdrop-filter: blur(8px); }
-.f-card:hover { transform: translateY(-10px); background: rgba(255,20,147,.14); border-color: rgba(255,20,147,.38); }
-.f-icon-wrap { width: 52px; height: 52px; background: rgba(255,20,147,.14); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; border: 1px solid rgba(255,20,147,.22); }
-.f-icon-svg { width: 26px; height: 26px; stroke: var(--pink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.f-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; color: var(--pink); letter-spacing: 1px; margin-bottom: 10px; }
-.f-desc { color: rgba(255,255,255,.68); font-size: .9rem; line-height: 1.65; }
+#friends { background: var(--navy); padding: 44px 6vw 100px; }
+/* Why SafeSips wears a softer, friendlier voice than the rest of the site:
+   rounded Baloo 2 display + Fredoka, instead of condensed Bebas. */
+#friends .tag { font-family: 'Fredoka', sans-serif; font-weight: 600; background: var(--gold); color: var(--navy); letter-spacing: 2px; }
+#friends .stitle {
+  font-family: 'Lilita One', system-ui, sans-serif; font-weight: 400; color: #fff;
+  font-size: clamp(2.8rem, 5.4vw, 5.2rem); line-height: 1.0; letter-spacing: .5px;
+  text-shadow: 0 2px 16px rgba(0,0,0,.22);
+}
+#friends .stitle .ideal { color: var(--gold); }
+#friends .stitle .pk {
+  background: linear-gradient(96deg, var(--pink) 0%, var(--mid-pink) 44%, var(--gold) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.f-sub { font-family: 'Fredoka', sans-serif; font-weight: 400; color: rgba(255,255,255,.72); font-size: 1.06rem; max-width: 480px; line-height: 1.7; margin-bottom: 56px; }
+/* The "Ideal Party Friend" cards stream as a continuous marquee that
+   moves RIGHT → LEFT: cards enter from the right edge and slide off the
+   left, looping forever. The track holds TWO identical copies and each
+   card owns its trailing gap (margin-right), so translateX(-50%) lands
+   exactly one copy over → a seamless loop. Hover/focus pauses it; the
+   edges dissolve via a mask so cards "go out of the screen". */
+.f-marquee {
+  --fcard-w: 332px;
+  --fgap: 40px;
+  position: relative;
+  margin: 12px -6vw 0;                /* break out of #friends' 6vw padding → full-bleed */
+  padding: 28px 0;                    /* vertical room for the hover lift + shadow */
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+}
+.f-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  /* Motion is driven by JS (requestAnimationFrame) — see the marquee script
+     near the bottom of the page. A CSS keyframe loop paused via
+     animation-play-state was replaced because pausing a compositor-run
+     transform animation snapped the row back a few px (the compositor runs
+     ahead of the main thread, and pausing commits the lagging value). */
+}
+
+.f-card {
+  flex: 0 0 var(--fcard-w);
+  width: var(--fcard-w);
+  margin-right: var(--fgap);
+  display: flex;
+  flex-direction: column;
+  min-height: 288px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 26px;
+  padding: 38px 34px 34px;
+  transition: transform .3s, background .3s, border-color .3s, box-shadow .3s;
+  cursor: default;
+}
+.f-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255,20,147,.14);
+  border-color: rgba(255,20,147,.42);
+  box-shadow: 0 18px 40px rgba(255,20,147,.18);
+}
+.f-icon-wrap { width: 60px; height: 60px; background: rgba(255,20,147,.14); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin-bottom: 22px; border: 1px solid rgba(255,20,147,.22); transition: transform .3s; }
+.f-card:hover .f-icon-wrap { transform: scale(1.08) rotate(-4deg); }
+.f-icon-svg { width: 30px; height: 30px; stroke: var(--pink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.f-title { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.42rem; color: var(--pink); letter-spacing: .1px; line-height: 1.2; margin-bottom: 12px; }
+.f-desc { color: rgba(255,255,255,.7); font-size: .98rem; line-height: 1.7; }
+
+/* Reduced motion: stop the stream, drop the duplicate copy, and let the
+   five real cards settle into a centered wrapped row. */
+@media (prefers-reduced-motion: reduce) {
+  .f-marquee { margin: 8px 0 0; overflow: visible;
+    -webkit-mask-image: none; mask-image: none; }
+  .f-track { animation: none; transform: none; width: auto; flex-wrap: wrap; justify-content: center; gap: 20px; }
+  .f-card { margin-right: 0; }
+  .f-dupe { display: none; }
+}
+
+/* How It Works + The App: squarer, less-round Lilita One display,
+   tuned for their LIGHT backgrounds: navy base word + a vivid pink→purple
+   highlight (gold would wash out on the light purple/lavender here). */
+#how .tag, #app .tag { font-family: 'Fredoka', sans-serif; font-weight: 600; letter-spacing: 2px; }
+#how .stitle, #app .stitle { font-family: 'Lilita One', system-ui, sans-serif; font-weight: 400; line-height: 1.0; letter-spacing: .5px; }
+#how .stitle .pk, #app .stitle .pk {
+  background: linear-gradient(96deg, var(--pink) 0%, #e0249b 45%, var(--purple-ch) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
 
 /* ── STATS ── */
 #stats { background: var(--pink); padding: 0; position: relative; }
@@ -236,7 +317,7 @@ section { position: relative; padding: 100px 6vw; overflow: hidden; }
 .snum-b { flex-shrink: 0; width: 52px; height: 52px; background: var(--pink); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; box-shadow: 0 4px 18px rgba(255,20,147,.42); }
 .step.visible .snum-b { animation: numPop .5s cubic-bezier(.34,1.56,.64,1) forwards; }
 @keyframes numPop { 0% { transform: scale(.7); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
-.s-h { font-family: 'Bebas Neue', sans-serif; font-size: 1.55rem; color: var(--navy); letter-spacing: .5px; margin-bottom: 6px; }
+.s-h { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.32rem; color: var(--navy); letter-spacing: .1px; line-height: 1.25; margin-bottom: 6px; }
 .s-p { color: #4a4a6a; font-size: .94rem; line-height: 1.65; }
 .how-vis { display: flex; align-items: flex-start; justify-content: center; position: sticky; top: 100px; }
 .ch-card { background: #fff; border-radius: 28px; padding: 36px; box-shadow: 0 20px 64px rgba(0,31,63,.12), 0 0 0 1px rgba(0,31,63,.04); width: 100%; max-width: 400px; }
@@ -365,7 +446,7 @@ section { position: relative; padding: 100px 6vw; overflow: hidden; }
 .a-feat:hover { transform: translateX(10px); box-shadow: 0 8px 34px rgba(0,31,63,.1); }
 .a-icon { width: 48px; height: 48px; background: var(--pink); border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 16px rgba(255,20,147,.36); }
 .a-icon svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.a-h { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--navy); letter-spacing: .5px; margin-bottom: 4px; }
+.a-h { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.06rem; color: var(--navy); letter-spacing: .1px; line-height: 1.25; margin-bottom: 4px; }
 .a-p { font-size: .875rem; color: #4a4a6a; line-height: 1.55; }
 
 /* phone */
@@ -473,13 +554,13 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .stats-inner { grid-template-columns: 1fr; gap: 16px; max-width: 360px; }
-  .f-grid { grid-template-columns: 1fr 1fr; }
+  .f-marquee { --fcard-w: 292px; --fgap: 28px; }
   .footer-top { flex-direction: column; gap: 32px; }
   .footer-links { gap: 32px; }
   .footer-bottom { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 480px) {
-  .f-grid { grid-template-columns: 1fr; }
+  .f-marquee { --fcard-w: 262px; --fgap: 22px; padding: 22px 0; }
   .hero-title { font-size: 4rem; }
   .pt1, .pt2, .pt3 { display: none; }
   .prob-q-text { font-size: 1.7rem; }
@@ -1029,10 +1110,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
 <section id="problem">
   <div class="deco" aria-hidden="true">
     <span class="dblob" style="top:-40px;left:-60px;width:480px;height:440px;--blob-c:rgba(255,20,147,.18);--gd:20s;--gx:30px;--gy:18px"></span>
-    <span class="dblob" style="bottom:-60px;right:-50px;width:520px;height:460px;--blob-c:rgba(212,175,55,.14);--gd:24s;--gdl:3s;--gx:-26px;--gy:-22px"></span>
-    <!-- quiet protective "detection" rings instead of party bubbles — the content here is serious -->
-    <span class="dring" style="top:50%;left:50%;margin:-225px 0 0 -225px;--rs:450px;--ring-c:rgba(255,255,255,.16);--rd:9s"></span>
-    <span class="dring" style="top:50%;left:50%;margin:-150px 0 0 -150px;--rs:300px;--ring-c:rgba(255,20,147,.20);--rd:9s;--rdl:1.4s"></span>
+    <span class="dblob" style="bottom:24px;right:-50px;width:520px;height:460px;--blob-c:rgba(212,175,55,.14);--gd:24s;--gdl:3s;--gx:-26px;--gy:-22px"></span>
   </div>
   <div class="prob-inner">
     <p class="prob-eyebrow reveal">The Reality — Romania 2024</p>
@@ -1052,51 +1130,95 @@ footer { background: var(--navy); color: rgba(255,255,255,.46); padding: 52px 6v
   </div>
 </section>
 
-<!-- WAVE: problem → friends (both navy, invisible divider with accent) -->
-<div style="background:var(--navy);height:2px;opacity:.3"></div>
+<!-- DIVIDER: problem → friends (both navy) — curved white line that echoes
+     the page's wave dividers; drawn as a stroke so it reads on navy-on-navy. -->
+<div class="wave-line" aria-hidden="true">
+  <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C400,76 1040,4 1440,40" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
+</div>
 
 <!-- ═══ WHY SAFESIPS ═══ -->
 <section id="friends">
   <div class="reveal">
     <div class="tag">Why SafeSips</div>
-    <h2 class="stitle">THE IDEAL<br><span class="pk">PARTY FRIEND</span></h2>
+    <h2 class="stitle">The <span class="ideal">Ideal</span><br><span class="pk">Party Friend</span></h2>
     <p class="f-sub">What do you look for in a friend at a party? Someone who keeps you safe, lets you have fun, and never leaves your side.</p>
   </div>
-  <div class="f-grid reveal">
-    <div class="f-card">
-      <div class="f-icon-wrap">
-        <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  <!-- Right→left marquee. The first 5 cards are the real content; the
+       next 5 (.f-dupe, aria-hidden) are a duplicate so the loop is seamless. -->
+  <div class="f-marquee reveal" tabindex="0" aria-label="Why SafeSips — the ideal party friend">
+    <div class="f-track">
+      <!-- ░░ copy A — real ░░ -->
+      <div class="f-card">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="f-title">Makes You Feel Safe</div>
+        <p class="f-desc">Instant drug detection means you can enjoy every single sip without a second thought. SafeSips quietly keeps watch so you don't have to.</p>
       </div>
-      <div class="f-title">Makes You Feel Safe</div>
-      <p class="f-desc">Instant drug detection so you can enjoy every sip without a second thought.</p>
-    </div>
-    <div class="f-card">
-      <div class="f-icon-wrap">
-        <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      <div class="f-card">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </div>
+        <div class="f-title">Lets You Have Fun</div>
+        <p class="f-desc">No more paranoia or hovering over your glass all night. Just pure, unapologetic fun with the people you came to see.</p>
       </div>
-      <div class="f-title">Lets You Have Fun</div>
-      <p class="f-desc">No more paranoia. Just pure, unapologetic fun with your people.</p>
-    </div>
-    <div class="f-card">
-      <div class="f-icon-wrap">
-        <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      <div class="f-card">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
+        <div class="f-title">Enjoy Your Drinks</div>
+        <p class="f-desc">Verify your drink in seconds and get right back to the dance floor. No buzzkills, no awkward pauses — just living your best night out.</p>
       </div>
-      <div class="f-title">Enjoy Your Drinks</div>
-      <p class="f-desc">Verify in seconds and get back to living your best night out.</p>
-    </div>
-    <div class="f-card">
-      <div class="f-icon-wrap">
-        <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <div class="f-card">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="f-title">Goes Anywhere With You</div>
+        <p class="f-desc">Slips into your bag or pocket and looks just like an ordinary pen on your desk. Always within reach, never getting in your way.</p>
       </div>
-      <div class="f-title">Goes Anywhere With You</div>
-      <p class="f-desc">Fits in your bag, pocket, or looks like a regular pen on your desk.</p>
-    </div>
-    <div class="f-card">
-      <div class="f-icon-wrap">
-        <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <div class="f-card">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="f-title">Reassures You</div>
+        <p class="f-desc">Discreet alerts and instant emergency contacts kick in the moment something feels off — because real peace of mind is priceless.</p>
       </div>
-      <div class="f-title">Reassures You</div>
-      <p class="f-desc">Discreet alerts and emergency contacts — because peace of mind is priceless.</p>
+      <!-- ░░ copy B — duplicate for the seamless loop ░░ -->
+      <div class="f-card f-dupe" aria-hidden="true">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="f-title">Makes You Feel Safe</div>
+        <p class="f-desc">Instant drug detection means you can enjoy every single sip without a second thought. SafeSips quietly keeps watch so you don't have to.</p>
+      </div>
+      <div class="f-card f-dupe" aria-hidden="true">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </div>
+        <div class="f-title">Lets You Have Fun</div>
+        <p class="f-desc">No more paranoia or hovering over your glass all night. Just pure, unapologetic fun with the people you came to see.</p>
+      </div>
+      <div class="f-card f-dupe" aria-hidden="true">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
+        <div class="f-title">Enjoy Your Drinks</div>
+        <p class="f-desc">Verify your drink in seconds and get right back to the dance floor. No buzzkills, no awkward pauses — just living your best night out.</p>
+      </div>
+      <div class="f-card f-dupe" aria-hidden="true">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="f-title">Goes Anywhere With You</div>
+        <p class="f-desc">Slips into your bag or pocket and looks just like an ordinary pen on your desk. Always within reach, never getting in your way.</p>
+      </div>
+      <div class="f-card f-dupe" aria-hidden="true">
+        <div class="f-icon-wrap">
+          <svg class="f-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="f-title">Reassures You</div>
+        <p class="f-desc">Discreet alerts and instant emergency contacts kick in the moment something feels off — because real peace of mind is priceless.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -1607,6 +1729,46 @@ if (stepsContainer) {
     }
   }, { threshold: 0.15 }).observe(stepsContainer);
 }
+
+// WHY SAFESIPS — right→left marquee, driven by requestAnimationFrame.
+// Driving the transform ourselves (instead of a CSS keyframe loop paused via
+// animation-play-state) means the on-screen position is always the exact
+// value we set, so pausing on hover holds dead still — no compositor/main-
+// thread split, no few-pixel snap-back. Loops seamlessly by wrapping the
+// offset at one copy width (half the doubled track).
+(function () {
+  const marquee = document.querySelector('.f-marquee');
+  if (!marquee) return;
+  const track = marquee.querySelector('.f-track');
+  if (!track) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // CSS shows a static wrapped row
+
+  const SPEED = 52; // px/sec — keeps the previous gentle pace
+  let copyW = track.scrollWidth / 2;
+  const remeasure = () => { copyW = track.scrollWidth / 2; };
+  if (window.ResizeObserver) new ResizeObserver(remeasure).observe(track);
+  window.addEventListener('resize', remeasure, { passive: true });
+  window.addEventListener('load', remeasure); // re-measure once webfonts settle
+
+  let offset = 0, paused = false, last = null;
+  function frame(now) {
+    if (last !== null && !paused && copyW > 0) {
+      const dt = Math.min((now - last) / 1000, 0.05); // clamp: no leap after a hidden tab
+      offset = (offset + SPEED * dt) % copyW;
+      track.style.transform = 'translateX(' + (-offset) + 'px)';
+    }
+    last = now;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  const pause  = () => { paused = true; };
+  const resume = () => { paused = false; };
+  marquee.addEventListener('mouseenter', pause);
+  marquee.addEventListener('mouseleave', resume);
+  marquee.addEventListener('focusin',  pause);
+  marquee.addEventListener('focusout', resume);
+})();
 
 // Stats counter animation
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
