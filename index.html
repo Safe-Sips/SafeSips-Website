@@ -9,6 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <meta name="description" content="SafeSips is a discreet pen that detects drugs in your drink in seconds — with instant alerts to the people you trust. Designed in Bucharest.">
 <meta name="theme-color" content="#14193B">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'self'; form-action 'self'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -20 40 40'%3E%3Cg fill='none' stroke='%23DD2E7C' stroke-width='3' stroke-linejoin='round'%3E%3Cpath d='M0 -4 C 4 -7 5 -13 0 -17 C -5 -13 -4 -7 0 -4'/%3E%3Cpath d='M0 -4 C 4 -7 5 -13 0 -17 C -5 -13 -4 -7 0 -4' transform='rotate(72)'/%3E%3Cpath d='M0 -4 C 4 -7 5 -13 0 -17 C -5 -13 -4 -7 0 -4' transform='rotate(144)'/%3E%3Cpath d='M0 -4 C 4 -7 5 -13 0 -17 C -5 -13 -4 -7 0 -4' transform='rotate(216)'/%3E%3Cpath d='M0 -4 C 4 -7 5 -13 0 -17 C -5 -13 -4 -7 0 -4' transform='rotate(288)'/%3E%3C/g%3E%3Ccircle r='2.4' fill='%23DD2E7C'/%3E%3C/svg%3E">
 <style>
 /* ═══════════════════════════════════════════════════════════════════
    SAFESIPS — "Refined Playful" design system
@@ -606,7 +609,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
     <p class="hero-desc">A discreet pen that detects drugs in your drink in seconds. Because safety should never be a privilege — it should fit in your pocket.</p>
     <div class="hero-btns">
       <button class="btn-p js-waitlist">Join the Waitlist</button>
-      <button class="btn-s" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How it Works</button>
+      <button class="btn-s" id="btnSeeHow">See How it Works</button>
     </div>
   </div>
 
@@ -994,7 +997,6 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
           <h4>Contact</h4>
           <a href="https://www.instagram.com/safesipss/" target="_blank" rel="noopener noreferrer">Instagram</a>
           <a href="mailto:support@safesips.app">support@safesips.app</a>
-          <a href="mailto:jamld2135@gmail.com">Email Us</a>
         </div>
       </div>
     </div>
@@ -1066,6 +1068,12 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     const t = document.querySelector(href);
     if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
   });
+});
+
+// Hero "See How it Works" button (no inline handler — CSP-friendly)
+const btnSeeHow = document.getElementById('btnSeeHow');
+if (btnSeeHow) btnSeeHow.addEventListener('click', () => {
+  document.getElementById('how').scrollIntoView({ behavior: 'smooth' });
 });
 
 // Generic scroll reveal
@@ -1188,8 +1196,8 @@ if (statsSection) {
 /* ════════════════════════════════════════════════════════════════
    WAITLIST — captures an email and subscribes via a Google Apps
    Script web app that stores it in a Sheet and sends a welcome email
-   from jamld2135@gmail.com. See waitlist.apps-script.gs for the
-   backend + deployment steps. Paste the deployed /exec URL below.
+   from the account that owns the script. See waitlist.apps-script.gs
+   for the backend + deployment steps. Paste the deployed /exec URL below.
    ════════════════════════════════════════════════════════════════ */
 (function () {
   // Set this to your Apps Script Web App URL (ends with /exec), or define
@@ -1281,7 +1289,7 @@ if (statsSection) {
         submitBtn.textContent = 'Join the Waitlist';
         setMsg(
           res.status === 401
-            ? 'Sign-up is temporarily unavailable. Please email jamld2135@gmail.com and we will add you manually.'
+            ? 'Sign-up is temporarily unavailable. Please email support@safesips.app and we will add you manually.'
             : 'Something went wrong. Please try again.',
           'error'
         );

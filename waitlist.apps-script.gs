@@ -4,16 +4,16 @@
  *
  * Receives a POST from the SafeSips website, saves the subscriber to a Google
  * Sheet, and sends a welcome email FROM the Google account that owns this
- * script (jamld2135@gmail.com).
+ * script.
  *
  * ── ONE-TIME SETUP ───────────────────────────────────────────────────────────
- * 1. Sign in to Google as jamld2135@gmail.com and create a new Google Sheet
- *    (e.g. "SafeSips Waitlist").
+ * 1. Sign in to the Google account that will own the waitlist and create a new
+ *    Google Sheet (e.g. "SafeSips Waitlist").
  * 2. In that Sheet: Extensions ▸ Apps Script. Delete the sample code and paste
  *    THIS entire file. Save.
  * 3. Deploy ▸ New deployment ▸ gear icon ▸ "Web app".
  *      - Description:        SafeSips waitlist
- *      - Execute as:         Me (jamld2135@gmail.com)
+ *      - Execute as:         Me
  *      - Who has access:     **Anyone**  (NOT "Anyone with Google Account")
  *
  *    ⚠️ THIS MATTERS: the website POSTs anonymously (no Google sign-in). If access
@@ -34,20 +34,42 @@
  * NOTE ON LIMITS: a consumer Gmail account can send to ~100 recipients/day via
  * Apps Script. That is fine for a waitlist welcome email, but not for bulk
  * newsletters — use a dedicated email provider when you start broadcasting.
+ *
+ * ── ABUSE CONTROLS (why the extra code below exists) ─────────────────────────
+ * The endpoint is public and anonymous, so it must defend itself:
+ *  - RATE LIMIT: a global token bucket (CacheService) caps signups per window
+ *    so a script kiddie can't flood the sheet or drain the Gmail send quota.
+ *  - DAILY EMAIL CAP: hard ceiling on welcome emails per calendar day, kept
+ *    below the Gmail quota so real signups are still recorded even when a
+ *    flood eats the email budget (rows are written first, emails are best-effort).
+ *  - FORMULA-INJECTION GUARD: user text starting with = + - @ is prefixed with
+ *    an apostrophe before it is written to the sheet, otherwise Sheets would
+ *    execute it as a live formula (e.g. =IMPORTXML exfiltration) when opened.
+ *  - LOCK: a document lock serializes the dedupe-check + append so concurrent
+ *    posts can't double-register the same address.
+ *  - LENGTH CAPS + GENERIC ERRORS: inputs are truncated, and internal error
+ *    details are logged server-side but never echoed back to the client.
  */
 
 const SHEET_NAME = 'Waitlist';
 const FROM_NAME = 'SafeSips';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Abuse-control knobs
+const RATE_LIMIT_WINDOW_SEC = 600; // 10-minute window
+const RATE_LIMIT_MAX = 20;         // max accepted signups per window (global)
+const DAILY_EMAIL_CAP = 80;        // welcome emails per day (Gmail quota ≈ 100)
+const MAX_EMAIL_LEN = 254;
+const MAX_NAME_LEN = 80;
+const MAX_SOURCE_LEN = 40;
+const MAX_UA_LEN = 200;
+
 /** Handles the website's POST submission. */
 function doPost(e) {
   try {
     const data = parseBody(e);
-    const email = String(data.email || '').trim().toLowerCase();
-    const name = String(data.name || '').trim();
-
-    Logger.log('doPost received: email=%s source=%s', email, String(data.source || 'website'));
+    const email = String(data.email || '').trim().toLowerCase().slice(0, MAX_EMAIL_LEN);
+    const name = String(data.name || '').trim().slice(0, MAX_NAME_LEN);
 
     // Honeypot: bots fill hidden fields; humans never do.
     if (String(data.botcheck || data.company || '').trim() !== '') {
@@ -57,45 +79,58 @@ function doPost(e) {
       return json({ ok: false, error: 'invalid_email' });
     }
 
-    const sheet = getSheet();
-    const isNew = !emailExists(sheet, email);
+    // Global rate limit: reject floods before touching the sheet or Gmail.
+    if (!rateLimitOk()) {
+      return json({ ok: false, error: 'rate_limited' });
+    }
 
-    // Always persist the subscriber FIRST so a flaky/unauthorized email never
-    // costs us the signup.
-    if (isNew) {
-      sheet.appendRow([
-        new Date(),
-        email,
-        name,
-        String(data.source || 'website'),
-        String(data.ua || '')
-      ]);
+    // Serialize dedupe-check + append so concurrent posts can't double-write.
+    const lock = LockService.getDocumentLock();
+    lock.waitLock(10000);
+    let isNew;
+    try {
+      const sheet = getSheet();
+      isNew = !emailExists(sheet, email);
+
+      // Always persist the subscriber FIRST so a flaky/unauthorized email never
+      // costs us the signup.
+      if (isNew) {
+        sheet.appendRow([
+          new Date(),
+          email, // regex-validated: cannot start with = + - @
+          sheetSafe(name),
+          sheetSafe(String(data.source || 'website').slice(0, MAX_SOURCE_LEN)),
+          sheetSafe(String(data.ua || '').slice(0, MAX_UA_LEN))
+        ]);
+      }
+    } finally {
+      lock.releaseLock();
     }
 
     // The welcome email is isolated in its own try/catch: a send failure must
     // not undo the row write above, nor bubble up as a generic failure.
     let emailSent = false;
-    let emailError = '';
-    if (isNew) {
+    if (isNew && underDailyEmailCap()) {
       try {
         sendWelcome(email, name);
         emailSent = true;
+        bumpDailyEmailCount();
       } catch (mailErr) {
-        emailError = String(mailErr && mailErr.message ? mailErr.message : mailErr);
-        Logger.log('sendWelcome failed for %s: %s', email, emailError);
+        // Details stay in the server log; the client only sees emailSent=false.
+        Logger.log('sendWelcome failed for %s: %s',
+          email, String(mailErr && mailErr.message ? mailErr.message : mailErr));
       }
     }
 
     return json({
       ok: true,
       alreadySubscribed: !isNew,
-      emailSent: emailSent,
-      emailError: emailError
+      emailSent: emailSent
     });
   } catch (err) {
-    const message = String(err && err.message ? err.message : err);
-    Logger.log('doPost failed: %s', message);
-    return json({ ok: false, error: message });
+    // Log the real error server-side; never echo internals to the client.
+    Logger.log('doPost failed: %s', String(err && err.message ? err.message : err));
+    return json({ ok: false, error: 'server_error' });
   }
 }
 
@@ -115,6 +150,45 @@ function parseBody(e) {
     }
   }
   return (e && e.parameter) || {};
+}
+
+/**
+ * Global sliding-window rate limit via CacheService. Apps Script does not
+ * expose the caller's IP, so this is a global bucket: it can't single out one
+ * abuser, but it caps total damage (sheet flooding, Gmail quota burn).
+ */
+function rateLimitOk() {
+  const cache = CacheService.getScriptCache();
+  const key = 'signup_bucket';
+  const count = Number(cache.get(key) || 0);
+  if (count >= RATE_LIMIT_MAX) return false;
+  cache.put(key, String(count + 1), RATE_LIMIT_WINDOW_SEC);
+  return true;
+}
+
+function underDailyEmailCap() {
+  const props = PropertiesService.getScriptProperties();
+  const today = Utilities.formatDate(new Date(), 'UTC', 'yyyy-MM-dd');
+  const raw = props.getProperty('email_count_' + today);
+  return Number(raw || 0) < DAILY_EMAIL_CAP;
+}
+
+function bumpDailyEmailCount() {
+  const props = PropertiesService.getScriptProperties();
+  const today = Utilities.formatDate(new Date(), 'UTC', 'yyyy-MM-dd');
+  const key = 'email_count_' + today;
+  props.setProperty(key, String(Number(props.getProperty(key) || 0) + 1));
+}
+
+/**
+ * Google Sheets treats cell values starting with = + - @ as live formulas,
+ * even when written via appendRow — a classic spreadsheet-injection vector
+ * (e.g. a "name" of =IMPORTXML(...) runs when the owner opens the sheet).
+ * Prefixing with an apostrophe forces plain text.
+ */
+function sheetSafe(value) {
+  const s = String(value);
+  return /^[=+\-@]/.test(s) ? ("'" + s) : s;
 }
 
 function getSheet() {
@@ -192,7 +266,8 @@ function escapeHtml(s) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function json(obj) {
