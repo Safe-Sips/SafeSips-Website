@@ -1315,7 +1315,7 @@ if (stepsContainer) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // CSS shows a static wrapped row
 
   const SPEED = 52;             // px/sec — gentle default drift (content → left)
-  const MAX_HOVER_SPEED = 340;  // px/sec — cap while following the cursor
+  const MAX_HOVER_SPEED = 750;  // px/sec — cap while following the cursor
   let copyW = track.scrollWidth / 2;
   const remeasure = () => { copyW = track.scrollWidth / 2; };
   if (window.ResizeObserver) new ResizeObserver(remeasure).observe(track);
