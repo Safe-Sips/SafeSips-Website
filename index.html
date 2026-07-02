@@ -1234,6 +1234,11 @@ if (statsSection) {
     emailEl.classList.remove('invalid');
     submitBtn.disabled = false;
     submitBtn.textContent = 'Join the Waitlist';
+    // Some browsers autofill hidden fields despite autocomplete="off", which
+    // would trip the honeypot and silently eat a real signup. A human never
+    // types here (tabindex=-1, invisible), so clearing it on open is safe —
+    // bots that fill it AFTER the modal opens are still caught.
+    if (honeypot) honeypot.value = '';
     setTimeout(() => emailEl.focus(), 60);
   }
   function close() {
