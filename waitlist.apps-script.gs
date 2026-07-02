@@ -4,16 +4,16 @@
  *
  * Receives a POST from the SafeSips website, saves the subscriber to a Google
  * Sheet, and sends a welcome email FROM the Google account that owns this
- * script.
+ * script (jamld2135@gmail.com).
  *
  * ── ONE-TIME SETUP ───────────────────────────────────────────────────────────
- * 1. Sign in to the Google account that will own the waitlist and create a new
- *    Google Sheet (e.g. "SafeSips Waitlist").
+ * 1. Sign in to Google as jamld2135@gmail.com and create a new Google Sheet
+ *    (e.g. "SafeSips Waitlist").
  * 2. In that Sheet: Extensions ▸ Apps Script. Delete the sample code and paste
  *    THIS entire file. Save.
  * 3. Deploy ▸ New deployment ▸ gear icon ▸ "Web app".
  *      - Description:        SafeSips waitlist
- *      - Execute as:         Me
+ *      - Execute as:         Me (jamld2135@gmail.com)
  *      - Who has access:     **Anyone**  (NOT "Anyone with Google Account")
  *
  *    ⚠️ THIS MATTERS: the website POSTs anonymously (no Google sign-in). If access
