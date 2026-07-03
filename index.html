@@ -1252,7 +1252,15 @@ if (statsSection) {
 
   document.querySelectorAll('.js-waitlist').forEach((b) => b.addEventListener('click', open));
   closeBtn.addEventListener('click', close);
-  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(); });
+  // Close only on a click that BOTH starts and ends on the backdrop — so
+  // selecting text inside the card and releasing the mouse outside it (a drag
+  // that ends on the backdrop) no longer closes the modal.
+  let pressedOnBackdrop = false;
+  backdrop.addEventListener('pointerdown', (e) => { pressedOnBackdrop = e.target === backdrop; });
+  backdrop.addEventListener('click', (e) => {
+    if (e.target === backdrop && pressedOnBackdrop) close();
+    pressedOnBackdrop = false;
+  });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && backdrop.classList.contains('open')) close(); });
 
   form.addEventListener('submit', async (e) => {
@@ -1448,7 +1456,14 @@ This summary is not legal advice. Consult qualified counsel before relying on it
 
   Object.values(modals).forEach((m) => {
     if (!m.el) return;
-    m.el.addEventListener('click', (e) => { if (e.target === m.el) closeLegal(); });
+    // Same guard as the waitlist modal: only close when the click both starts
+    // and ends on the backdrop, so text selection that drags outside is safe.
+    let pressedOnBackdrop = false;
+    m.el.addEventListener('pointerdown', (e) => { pressedOnBackdrop = e.target === m.el; });
+    m.el.addEventListener('click', (e) => {
+      if (e.target === m.el && pressedOnBackdrop) closeLegal();
+      pressedOnBackdrop = false;
+    });
   });
 
   document.addEventListener('keydown', (e) => {
