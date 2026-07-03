@@ -490,20 +490,33 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 /* ── WAITLIST + LEGAL MODALS ── */
 .wl-backdrop {
-  position: fixed; inset: 0; z-index: 3000; display: none;
+  position: fixed; inset: 0; z-index: 3000; display: flex;
   align-items: center; justify-content: center; padding: 20px;
   background: rgba(20,25,59,.55); backdrop-filter: blur(6px);
+  /* Transition-based show/hide so the modal fades OUT as smoothly as it fades
+     in. visibility is held until the opacity fade finishes on close (delay),
+     and applied immediately on open. */
+  opacity: 0; visibility: hidden;
+  transition: opacity .26s ease, visibility 0s linear .26s;
 }
-.wl-backdrop.open { display: flex; animation: wlFade .22s ease; }
-@keyframes wlFade { from { opacity: 0; } to { opacity: 1; } }
+.wl-backdrop.open {
+  opacity: 1; visibility: visible;
+  transition: opacity .26s ease, visibility 0s;
+}
 .wl-card {
   position: relative; width: min(440px, 100%);
   background: var(--card);
   border-radius: var(--r-lg);
   padding: 38px 34px 28px; box-shadow: 0 30px 80px rgba(20,25,59,.4);
-  animation: wlPop .28s cubic-bezier(.34,1.56,.64,1);
+  /* Resting (closed) state + the exit transition: clean ease-out slide-down. */
+  transform: translateY(18px) scale(.96); opacity: 0;
+  transition: transform .24s ease, opacity .2s ease;
 }
-@keyframes wlPop { from { transform: translateY(16px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+.wl-backdrop.open .wl-card {
+  transform: none; opacity: 1;
+  /* Springier entrance than exit (exit feels snappier that way). */
+  transition: transform .34s cubic-bezier(.34,1.56,.64,1), opacity .24s ease;
+}
 .wl-close {
   position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
   border: none; border-radius: 50%; background: rgba(20,25,59,.07); color: var(--ink);
@@ -553,7 +566,8 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 }
 .legal-body p { margin-bottom: 10px; }
 @media (prefers-reduced-motion: reduce) {
-  .wl-backdrop.open, .wl-card { animation: none; }
+  .wl-backdrop, .wl-backdrop.open,
+  .wl-card, .wl-backdrop.open .wl-card { transition: none; }
 }
 @media (max-width: 480px) {
   .wl-card { padding: 32px 22px 24px; border-radius: 22px; }
