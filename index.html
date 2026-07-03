@@ -153,45 +153,30 @@ button { font-family: inherit; }
 }
 .btn-s:hover { background: var(--ink); border-color: var(--ink); color: #fff; transform: translateY(-2px); }
 
-/* hero pen (restored SVG pen with hover-to-open) */
-/* sparkles */
-.spark { position: absolute; pointer-events: none; z-index: 4; font-style: normal; }
-.spark span { position: absolute; color: var(--pink); font-size: inherit; animation: sparkFloat var(--dur,3s) ease-in-out infinite; animation-delay: var(--del,0s); display: block; }
-.spark span:last-child { color: var(--pink); animation-direction: reverse; animation-delay: calc(var(--del,0s) + .4s); }
-@keyframes sparkFloat {
-  0%,100% { transform: translateY(0) rotate(0deg) scale(1); opacity: .9; }
-  33% { transform: translateY(-22px) rotate(120deg) scale(.55); opacity: .3; }
-  66% { transform: translateY(-10px) rotate(240deg) scale(1.25); opacity: 1; }
+/* hero product render */
+.hero-right { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; animation: fadeUp 1s ease .2s both; }
+.pen-stage { position: relative; width: min(420px, 100%); }
+.pen-img {
+  display: block; width: 100%; height: auto;
+  border-radius: var(--r-lg);
+  box-shadow: 0 4px 10px rgba(20,25,59,.06), 0 34px 80px rgba(20,25,59,.16);
+  animation: penFloat 7s ease-in-out infinite;
 }
-.flower { position: absolute; z-index: 2; animation: flowerIn 1.5s ease .2s both, floatF 4s ease-in-out infinite var(--fdelay,0s); pointer-events: none; user-select: none; line-height: 1; }
-@keyframes floatF { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-16px) rotate(15deg); } }
-@keyframes flowerIn { from { opacity: 0; } }
-
-/* pen stage */
-.hero-right { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; min-height: 70vh; animation: fadeUp 1s ease .25s both; }
-.pen-stage { position: relative; width: 340px; height: 600px; display: flex; align-items: center; justify-content: center; }
-.pen-glow { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle,rgba(255,20,147,.32) 0%,transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: pGlow 3s ease-in-out infinite; pointer-events: none; }
-@keyframes pGlow { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 1; } 50% { transform: translate(-50%,-50%) scale(1.38); opacity: .45; } }
-.orb { position: absolute; border-radius: 50%; top: 50%; left: 50%; pointer-events: none; }
-.orb1 { width: 320px; height: 320px; border: 1.5px dashed rgba(255,20,147,.24); animation: oSpin 10s linear infinite; transform: translate(-50%,-50%); }
-.orb2 { width: 410px; height: 410px; border: 1px dashed rgba(0,31,63,.1); animation: oSpin 16s linear infinite reverse; transform: translate(-50%,-50%); }
-@keyframes oSpin { from { transform: translate(-50%,-50%) rotate(0deg); } to { transform: translate(-50%,-50%) rotate(360deg); } }
-.odot { position: absolute; width: 10px; height: 10px; border-radius: 50%; top: -5px; left: calc(50% - 5px); }
-.odot-pk { background: var(--pink); box-shadow: 0 0 10px rgba(255,20,147,.9); }
-.odot-gd { background: var(--pink); box-shadow: 0 0 10px rgba(255,107,181,.8); }
-.pen-wrap { position: relative; z-index: 3; cursor: pointer; transition: transform .4s cubic-bezier(.34,1.56,.64,1), filter .4s; filter: drop-shadow(0 24px 44px rgba(0,31,63,.24)) drop-shadow(0 4px 16px rgba(255,20,147,.18)); animation: penFloat 5s ease-in-out infinite; }
-@keyframes penFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-.pen-wrap:hover { animation-play-state: paused; transform: scale(1.06) translateY(-8px); filter: drop-shadow(0 32px 56px rgba(0,31,63,.3)) drop-shadow(0 0 36px rgba(255,20,147,.44)); }
-/* pen opens only on hover */
-.pen-internals { opacity: 0; transition: opacity .5s ease; }
-.pen-closed-label { opacity: .5; transition: opacity .4s ease; }
-.pen-wrap:hover .pen-internals { opacity: 1; }
-.pen-wrap:hover .pen-closed-label { opacity: 0; }
-.ptip { position: absolute; background: var(--ink); color: #fff; font-family: 'Nunito', sans-serif; font-size: .72rem; font-weight: 700; padding: 6px 14px; border-radius: 30px; white-space: nowrap; letter-spacing: .5px; opacity: 0; transform: translateX(-16px); transition: all .3s ease; pointer-events: none; z-index: 10; }
-.pen-wrap:hover .ptip { opacity: 1; transform: translateX(0); }
-.pt1 { top: 27%; left: 166px; transition-delay: 0s; }
-.pt2 { top: 45%; left: 166px; transition-delay: .08s; }
-.pt3 { top: 63%; left: 166px; transition-delay: .16s; }
+@keyframes penFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.ptip {
+  position: absolute; z-index: 3;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+  color: var(--ink); font-size: .8rem; font-weight: 600;
+  padding: 10px 16px; border-radius: 50px; white-space: nowrap;
+  border: 1px solid rgba(255,255,255,.9);
+  box-shadow: 0 10px 30px rgba(20,25,59,.16);
+  animation: chipFloat 6s ease-in-out infinite;
+}
+.ptip-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); flex-shrink: 0; }
+.pt1 { top: 16%; left: -8%; }
+.pt2 { bottom: 20%; right: -6%; animation-delay: 1.6s; }
+@keyframes chipFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 
 /* ── SHARED SECTION ── */
 section { position: relative; padding: 110px 6vw; overflow: hidden; }
@@ -468,14 +453,16 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 .reveal.visible { opacity: 1; transform: none; }
 
 /* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .pt1 { left: 2%; }
+  .pt2 { right: 2%; }
+}
 @media (max-width: 768px) {
   section { padding: 84px 6vw; }
   #hero { grid-template-columns: 1fr; padding: 104px 6vw 56px; text-align: center; gap: 2rem; }
   .hero-left { order: 2; }
-  .hero-right { order: 1; min-height: 44vh; }
-  .pen-stage { width: 230px; height: 430px; }
-  .orb1 { width: 220px; height: 220px; }
-  .orb2 { width: 295px; height: 295px; }
+  .hero-right { order: 1; }
+  .pen-stage { width: min(280px, 76vw); }
   .hero-badges { justify-content: center; }
   .hero-btns { justify-content: center; }
   .hero-desc { margin-left: auto; margin-right: auto; }
@@ -497,7 +484,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 @media (max-width: 480px) {
   .f-marquee { --fcard-w: 262px; --fgap: 20px; padding: 22px 0; }
   .hero-title { font-size: 3.3rem; }
-  .pt1, .pt2, .pt3 { display: none; }
+  .ptip { font-size: .72rem; padding: 8px 13px; }
   .prob-q-text { font-size: 1.45rem; }
 }
 
@@ -621,190 +608,13 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
   <!-- RIGHT: PRODUCT -->
   <div class="hero-right">
     <div class="pen-stage">
-      <div class="pen-glow"></div>
-      <div class="orb orb1"><div class="odot odot-pk"></div></div>
-      <div class="orb orb2"><div class="odot odot-gd"></div></div>
-
-      <!-- Sparkles -->
-      <span class="spark" style="top:11%;left:18%;font-size:1rem;--dur:2.8s;--del:0s" aria-hidden="true"><span>✦</span><span>✦</span></span>
-      <span class="spark" style="top:24%;right:12%;font-size:.7rem;--dur:3.4s;--del:.7s" aria-hidden="true"><span>✦</span><span>✦</span></span>
-      <span class="spark" style="top:67%;left:10%;font-size:.9rem;--dur:3.1s;--del:1.2s" aria-hidden="true"><span>✦</span><span>✦</span></span>
-      <span class="spark" style="top:77%;right:16%;font-size:.65rem;--dur:2.6s;--del:.4s" aria-hidden="true"><span>✦</span><span>✦</span></span>
-      <span class="spark" style="top:41%;left:6%;font-size:.8rem;--dur:3.7s;--del:1.8s" aria-hidden="true"><span>✦</span><span>✦</span></span>
-
-      <div class="pen-wrap" role="img" aria-label="SafeSips detection pen">
-        <div class="ptip pt1">Detects in &lt; 5 seconds</div>
-        <div class="ptip pt2">3-channel sensor</div>
-        <div class="ptip pt3">Discreet design</div>
-
-        <svg width="150" height="520" viewBox="0 0 150 520" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="bodyMetal" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#11161a"/><stop offset="0.18" stop-color="#2b3640"/><stop offset="0.42" stop-color="#3c4e57"/><stop offset="0.6" stop-color="#222d34"/><stop offset="0.82" stop-color="#161d22"/><stop offset="1" stop-color="#090c0e"/>
-            </linearGradient>
-            <linearGradient id="capMetal" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#0d1114"/><stop offset="0.3" stop-color="#39474f"/><stop offset="0.55" stop-color="#4a5e67"/><stop offset="0.8" stop-color="#1c252a"/><stop offset="1" stop-color="#070a0c"/>
-            </linearGradient>
-            <linearGradient id="tipMetal" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#0a0d0f"/><stop offset="0.35" stop-color="#5a6e74"/><stop offset="0.5" stop-color="#8a9da2"/><stop offset="0.65" stop-color="#4a5b62"/><stop offset="1" stop-color="#070909"/>
-            </linearGradient>
-            <linearGradient id="windowGlass" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#0c1418" stop-opacity="0.96"/><stop offset="0.5" stop-color="#11242b" stop-opacity="0.82"/><stop offset="1" stop-color="#070d10" stop-opacity="0.96"/>
-            </linearGradient>
-            <linearGradient id="clipMetal" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#0c1013"/><stop offset="0.4" stop-color="#54666d"/><stop offset="0.7" stop-color="#2a353b"/><stop offset="1" stop-color="#0a0d0f"/>
-            </linearGradient>
-            <radialGradient id="ledGlow" cx="0.5" cy="0.5" r="0.5">
-              <stop offset="0" stop-color="#ff5560"/><stop offset="0.5" stop-color="#ff2d3d"/><stop offset="1" stop-color="#ff2d3d" stop-opacity="0"/>
-            </radialGradient>
-            <linearGradient id="chAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd28a"/><stop offset="0.5" stop-color="#ffb13b"/><stop offset="1" stop-color="#f5a623"/></linearGradient>
-            <linearGradient id="chBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fe2ff"/><stop offset="0.5" stop-color="#45c8ff"/><stop offset="1" stop-color="#3aa0ff"/></linearGradient>
-            <linearGradient id="chPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb0d6"/><stop offset="0.5" stop-color="#ff5db1"/><stop offset="1" stop-color="#ff3d9a"/></linearGradient>
-            <linearGradient id="chFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1418" stop-opacity="0"/><stop offset="1" stop-color="#0a1418" stop-opacity="0.66"/></linearGradient>
-            <filter id="softGlow" x="-80%" y="-40%" width="260%" height="180%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <filter id="bigGlow" x="-150%" y="-30%" width="400%" height="160%"><feGaussianBlur stdDeviation="4.5"/></filter>
-            <filter id="penShadow" x="-60%" y="-10%" width="220%" height="120%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#1a2230" flood-opacity="0.45"/></filter>
-          </defs>
-
-          <g filter="url(#penShadow)">
-            <rect x="51" y="44" width="48" height="58" rx="14" fill="url(#capMetal)" stroke="#05080a" stroke-width="1"/>
-            <rect x="55" y="48" width="6" height="50" rx="3" fill="#5b6e76" opacity="0.55"/>
-            <rect x="89" y="48" width="4" height="50" rx="2" fill="#000" opacity="0.4"/>
-            <ellipse cx="75" cy="48" rx="22" ry="5" fill="#56696f" opacity="0.5"/>
-            <path d="M58 50 L92 50 L88 40 Q75 36 62 40 Z" fill="url(#capMetal)" stroke="#05080a" stroke-width="0.8"/>
-
-            <rect x="50" y="56" width="6" height="120" rx="3" fill="url(#clipMetal)" stroke="#05080a" stroke-width="0.6"/>
-            <path d="M50 56 Q44 56 44 64 L44 150 Q44 158 50 158 L50 150 Q48 150 48 144 L48 66 Q48 60 50 60 Z" fill="url(#clipMetal)" stroke="#04070a" stroke-width="0.5"/>
-            <rect x="48" y="56" width="9" height="8" rx="2" fill="#2a353b" stroke="#05080a" stroke-width="0.4"/>
-            <circle cx="52.5" cy="60" r="1.7" fill="#1a2228" stroke="#7fa1a6" stroke-width="0.5" opacity="0.85"/>
-            <circle cx="46" cy="150" r="2.4" fill="#6a7d83" opacity="0.7"/>
-
-            <rect x="51" y="98" width="48" height="330" rx="9" fill="url(#bodyMetal)" stroke="#05080a" stroke-width="1"/>
-            <g opacity="0.9">
-              <rect x="53" y="102" width="6" height="322" rx="3" fill="#56697040"/>
-              <rect x="91" y="102" width="4" height="322" rx="2" fill="#00000055"/>
-            </g>
-            <g stroke="#0a1115" stroke-width="0.6" opacity="0.5"><path d="M52 108 l46 -7 M52 116 l46 -7 M52 124 l46 -7"/></g>
-            <g stroke="#5a6f7644" stroke-width="0.6" opacity="0.5"><path d="M52 101 l46 7 M52 109 l46 7 M52 117 l46 7"/></g>
-
-            <g>
-              <rect x="51" y="120" width="48" height="34" rx="3" fill="#10181c"/>
-              <g stroke="#566a7155" stroke-width="0.7">
-                <path d="M53 122 l4 4 M57 122 l4 4 M61 122 l4 4 M65 122 l4 4 M69 122 l4 4 M73 122 l4 4 M77 122 l4 4 M81 122 l4 4 M85 122 l4 4 M89 122 l4 4 M93 122 l4 4"/>
-                <path d="M53 126 l4 4 M57 126 l4 4 M61 126 l4 4 M65 126 l4 4 M69 126 l4 4 M73 126 l4 4 M77 126 l4 4 M81 126 l4 4 M85 126 l4 4 M89 126 l4 4 M93 126 l4 4"/>
-                <path d="M53 130 l4 4 M57 130 l4 4 M61 130 l4 4 M65 130 l4 4 M69 130 l4 4 M73 130 l4 4 M77 130 l4 4 M81 130 l4 4 M85 130 l4 4 M89 130 l4 4 M93 130 l4 4"/>
-                <path d="M53 134 l4 4 M57 134 l4 4 M61 134 l4 4 M65 134 l4 4 M69 134 l4 4 M73 134 l4 4 M77 134 l4 4 M81 134 l4 4 M85 134 l4 4 M89 134 l4 4 M93 134 l4 4"/>
-                <path d="M53 138 l4 4 M57 138 l4 4 M61 138 l4 4 M65 138 l4 4 M69 138 l4 4 M73 138 l4 4 M77 138 l4 4 M81 138 l4 4 M85 138 l4 4 M89 138 l4 4 M93 138 l4 4"/>
-                <path d="M53 142 l4 4 M57 142 l4 4 M61 142 l4 4 M65 142 l4 4 M69 142 l4 4 M73 142 l4 4 M77 142 l4 4 M81 142 l4 4 M85 142 l4 4 M89 142 l4 4 M93 142 l4 4"/>
-                <path d="M53 146 l4 4 M57 146 l4 4 M61 146 l4 4 M65 146 l4 4 M69 146 l4 4 M73 146 l4 4 M77 146 l4 4 M81 146 l4 4 M85 146 l4 4 M89 146 l4 4 M93 146 l4 4"/>
-              </g>
-              <g stroke="#0a0f1288" stroke-width="0.7">
-                <path d="M57 122 l-4 4 M61 122 l-4 4 M65 122 l-4 4 M69 122 l-4 4 M73 122 l-4 4 M77 122 l-4 4 M81 122 l-4 4 M85 122 l-4 4 M89 122 l-4 4 M93 122 l-4 4 M97 122 l-4 4"/>
-                <path d="M57 130 l-4 4 M61 130 l-4 4 M65 130 l-4 4 M69 130 l-4 4 M73 130 l-4 4 M77 130 l-4 4 M81 130 l-4 4 M85 130 l-4 4 M89 130 l-4 4 M93 130 l-4 4 M97 130 l-4 4"/>
-                <path d="M57 138 l-4 4 M61 138 l-4 4 M65 138 l-4 4 M69 138 l-4 4 M73 138 l-4 4 M77 138 l-4 4 M81 138 l-4 4 M85 138 l-4 4 M89 138 l-4 4 M93 138 l-4 4 M97 138 l-4 4"/>
-                <path d="M57 146 l-4 4 M61 146 l-4 4 M65 146 l-4 4 M69 146 l-4 4 M73 146 l-4 4 M77 146 l-4 4 M81 146 l-4 4 M85 146 l-4 4 M89 146 l-4 4 M93 146 l-4 4 M97 146 l-4 4"/>
-              </g>
-            </g>
-
-            <g>
-              <rect x="51" y="372" width="48" height="34" rx="3" fill="#10181c"/>
-              <g stroke="#566a7155" stroke-width="0.7">
-                <path d="M53 374 l4 4 M57 374 l4 4 M61 374 l4 4 M65 374 l4 4 M69 374 l4 4 M73 374 l4 4 M77 374 l4 4 M81 374 l4 4 M85 374 l4 4 M89 374 l4 4 M93 374 l4 4"/>
-                <path d="M53 380 l4 4 M57 380 l4 4 M61 380 l4 4 M65 380 l4 4 M69 380 l4 4 M73 380 l4 4 M77 380 l4 4 M81 380 l4 4 M85 380 l4 4 M89 380 l4 4 M93 380 l4 4"/>
-                <path d="M53 386 l4 4 M57 386 l4 4 M61 386 l4 4 M65 386 l4 4 M69 386 l4 4 M73 386 l4 4 M77 386 l4 4 M81 386 l4 4 M85 386 l4 4 M89 386 l4 4 M93 386 l4 4"/>
-                <path d="M53 392 l4 4 M57 392 l4 4 M61 392 l4 4 M65 392 l4 4 M69 392 l4 4 M73 392 l4 4 M77 392 l4 4 M81 392 l4 4 M85 392 l4 4 M89 392 l4 4 M93 392 l4 4"/>
-                <path d="M53 398 l4 4 M57 398 l4 4 M61 398 l4 4 M65 398 l4 4 M69 398 l4 4 M73 398 l4 4 M77 398 l4 4 M81 398 l4 4 M85 398 l4 4 M89 398 l4 4 M93 398 l4 4"/>
-              </g>
-              <g stroke="#0a0f1288" stroke-width="0.7">
-                <path d="M57 374 l-4 4 M61 374 l-4 4 M65 374 l-4 4 M69 374 l-4 4 M73 374 l-4 4 M77 374 l-4 4 M81 374 l-4 4 M85 374 l-4 4 M89 374 l-4 4 M93 374 l-4 4 M97 374 l-4 4"/>
-                <path d="M57 382 l-4 4 M61 382 l-4 4 M65 382 l-4 4 M69 382 l-4 4 M73 382 l-4 4 M77 382 l-4 4 M81 382 l-4 4 M85 382 l-4 4 M89 382 l-4 4 M93 382 l-4 4 M97 382 l-4 4"/>
-                <path d="M57 390 l-4 4 M61 390 l-4 4 M65 390 l-4 4 M69 390 l-4 4 M73 390 l-4 4 M77 390 l-4 4 M81 390 l-4 4 M85 390 l-4 4 M89 390 l-4 4 M93 390 l-4 4 M97 390 l-4 4"/>
-                <path d="M57 398 l-4 4 M61 398 l-4 4 M65 398 l-4 4 M69 398 l-4 4 M73 398 l-4 4 M77 398 l-4 4 M81 398 l-4 4 M85 398 l-4 4 M89 398 l-4 4 M93 398 l-4 4 M97 398 l-4 4"/>
-              </g>
-            </g>
-
-            <g class="pen-internals">
-            <rect x="55" y="158" width="40" height="210" rx="6" fill="url(#windowGlass)" stroke="#3a4d55" stroke-width="1"/>
-            <rect x="55" y="158" width="40" height="210" rx="6" fill="none" stroke="#0a0e10" stroke-width="0.5"/>
-            <rect x="58" y="161" width="5" height="204" rx="2.5" fill="#aecfe0" opacity="0.12"/>
-            <path d="M58 162 Q75 158 92 162" fill="none" stroke="#bfe3f2" stroke-width="1" opacity="0.3"/>
-
-            <g filter="url(#bigGlow)" opacity="0.85">
-              <rect x="63" y="168" width="6" height="172" fill="url(#chAmber)"/>
-              <rect x="72" y="168" width="6" height="172" fill="url(#chBlue)"/>
-              <rect x="81" y="168" width="6" height="172" fill="url(#chPink)"/>
-            </g>
-            <g filter="url(#softGlow)">
-              <rect x="64.5" y="168" width="3" height="172" rx="1.5" fill="url(#chAmber)"/>
-              <rect x="73.5" y="168" width="3" height="172" rx="1.5" fill="url(#chBlue)"/>
-              <rect x="82.5" y="168" width="3" height="172" rx="1.5" fill="url(#chPink)"/>
-            </g>
-            <rect x="65.4" y="168" width="1.2" height="172" fill="#fff" opacity="0.7"/>
-            <rect x="74.4" y="168" width="1.2" height="172" fill="#fff" opacity="0.7"/>
-            <rect x="83.4" y="168" width="1.2" height="172" fill="#fff" opacity="0.7"/>
-            <rect x="60" y="236" width="30" height="104" fill="url(#chFade)"/>
-
-            <g>
-              <rect x="60" y="164" width="30" height="22" rx="2" fill="#0c3a24" stroke="#1f6e44" stroke-width="0.8"/>
-              <rect x="62" y="167" width="9" height="7" rx="1" fill="#15301f" stroke="#2d8a55" stroke-width="0.5"/>
-              <rect x="79" y="167" width="9" height="7" rx="1" fill="#15301f" stroke="#2d8a55" stroke-width="0.5"/>
-              <g stroke="#52d488" stroke-width="0.6" opacity="0.9"><path d="M62 178 h26 M62 181 h26 M66 177 v7 M74 177 v7 M82 177 v7"/></g>
-              <circle cx="64" cy="183" r="1" fill="#ffd76a"/>
-              <circle cx="86" cy="183" r="1" fill="#ffd76a"/>
-            </g>
-
-            <g>
-              <rect x="60" y="196" width="13" height="12" rx="2" fill="#1a2228" stroke="#46606a" stroke-width="0.7"/>
-              <circle cx="66.5" cy="202" r="3.2" fill="url(#ledGlow)" opacity="0.9"/>
-              <circle cx="66.5" cy="202" r="1.6" fill="#fff0c0"/>
-              <rect x="77" y="196" width="13" height="12" rx="2" fill="#1a2228" stroke="#46606a" stroke-width="0.7"/>
-              <circle cx="83.5" cy="202" r="3" fill="#1d3a52" stroke="#3aa0ff" stroke-width="0.7"/>
-              <circle cx="83.5" cy="202" r="1.2" fill="#9fe2ff" opacity="0.9"/>
-              <path d="M73 202 h4 M73 200 h4 M73 204 h4" stroke="#ffe08a" stroke-width="0.5" opacity="0.6"/>
-            </g>
-
-            <g>
-              <rect x="60" y="296" width="30" height="20" rx="2" fill="#0d1418" stroke="#46606a" stroke-width="0.8"/>
-              <rect x="63" y="299" width="6" height="6" rx="1" fill="#f5a623"/>
-              <rect x="71.5" y="299" width="6" height="6" rx="1" fill="#45c8ff"/>
-              <rect x="80" y="299" width="6" height="6" rx="1" fill="#ff3d9a"/>
-              <rect x="63" y="307" width="6" height="6" rx="1" fill="#9c6a1f"/>
-              <rect x="71.5" y="307" width="6" height="6" rx="1" fill="#2a5f93"/>
-              <rect x="80" y="307" width="6" height="6" rx="1" fill="#9c2c63"/>
-            </g>
-            </g>
-
-            <rect x="51" y="420" width="48" height="22" rx="6" fill="url(#capMetal)" stroke="#05080a" stroke-width="1"/>
-            <rect x="55" y="423" width="40" height="3" rx="1.5" fill="#56696f" opacity="0.5"/>
-
-            <g>
-              <path d="M55 440 L95 440 L90 458 L60 458 Z" fill="url(#tipMetal)" stroke="#05080a" stroke-width="0.8"/>
-              <path d="M60 458 L90 458 L84 476 L66 476 Z" fill="url(#tipMetal)" stroke="#05080a" stroke-width="0.8"/>
-              <path d="M66 476 L84 476 L77.5 496 L72.5 496 Z" fill="url(#tipMetal)" stroke="#05080a" stroke-width="0.8"/>
-              <path d="M72.5 496 L77.5 496 L75 506 Z" fill="url(#tipMetal)" stroke="#05080a" stroke-width="0.6"/>
-              <path d="M57 444 L93 444" stroke="#9db0b6" stroke-width="0.8" opacity="0.6"/>
-              <path d="M62 462 L88 462" stroke="#9db0b6" stroke-width="0.8" opacity="0.6"/>
-              <path d="M68 480 L82 480" stroke="#9db0b6" stroke-width="0.7" opacity="0.55"/>
-              <circle cx="75" cy="503" r="1.6" fill="#bcd0d6" opacity="0.5"/>
-            </g>
-          </g>
-
-          <g class="pen-closed-label">
-            <text x="75" y="240" font-family="'Bebas Neue',sans-serif" font-size="9" letter-spacing="4" fill="#9fb4c0" text-anchor="middle" transform="rotate(90 75 240)">SAFESIPS</text>
-          </g>
-
-          <circle cx="75" cy="113" r="4.5" fill="url(#ledGlow)" opacity="0.95">
-            <animate attributeName="opacity" values=".4;1;.4" dur="2s" repeatCount="indefinite"/>
-          </circle>
-          <circle cx="75" cy="113" r="2" fill="#ffd5d8">
-            <animate attributeName="opacity" values=".6;1;.6" dur="2s" repeatCount="indefinite"/>
-          </circle>
-          <circle cx="75" cy="113" r="8" fill="none" stroke="#ff2d3d" stroke-width="1.4" opacity="0.5">
-            <animate attributeName="r" values="5;11;5" dur="2s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values=".55;0;.55" dur="2s" repeatCount="indefinite"/>
-          </circle>
-        </svg>
-      </div>
+      <picture>
+        <source srcset="assets/pen-hero.webp" type="image/webp">
+        <img class="pen-img" src="assets/pen-hero.png" width="896" height="1200" fetchpriority="high"
+             alt="The SafeSips detection pen: a discreet matte-black pen with a red status light">
+      </picture>
+      <div class="ptip pt1"><span class="ptip-dot"></span>Detects in &lt; 5 seconds</div>
+      <div class="ptip pt2"><span class="ptip-dot"></span>3-channel sensor</div>
     </div>
   </div>
 </section>
