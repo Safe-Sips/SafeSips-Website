@@ -115,8 +115,6 @@ button { font-family: inherit; }
   display: grid; grid-template-columns: 1.02fr .98fr; align-items: center;
   padding: 120px 6vw 72px; overflow: hidden; gap: 3rem;
 }
-.hero-bloom { top: 84px; right: -40px; width: min(360px, 30vw); color: var(--pink); opacity: .3; }
-.hero-bloom-2 { bottom: -30px; left: -50px; width: 240px; color: var(--ink); opacity: .12; transform: scaleX(-1); }
 
 .hero-left { position: relative; z-index: 2; animation: fadeUp .9s ease both; }
 .hero-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
@@ -167,13 +165,13 @@ button { font-family: inherit; }
   position: absolute; z-index: 3;
   display: flex; align-items: center; gap: 8px;
   background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
-  color: var(--ink); font-size: .8rem; font-weight: 600;
-  padding: 10px 16px; border-radius: 50px; white-space: nowrap;
+  color: var(--ink); font-size: 1.02rem; font-weight: 600;
+  padding: 13px 22px; border-radius: 50px; white-space: nowrap;
   border: 1px solid rgba(255,255,255,.9);
   box-shadow: 0 10px 30px rgba(20,25,59,.16);
   animation: chipFloat 6s ease-in-out infinite;
 }
-.ptip-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); flex-shrink: 0; }
+.ptip-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pink); flex-shrink: 0; }
 .pt1 { top: 16%; left: -8%; }
 .pt2 { bottom: 20%; right: -6%; animation-delay: 1.6s; }
 @keyframes chipFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
@@ -466,8 +464,6 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
   .hero-badges { justify-content: center; }
   .hero-btns { justify-content: center; }
   .hero-desc { margin-left: auto; margin-right: auto; }
-  .hero-bloom { top: 64px; right: -60px; width: 200px; opacity: .2; }
-  .hero-bloom-2 { display: none; }
   .how-grid, .app-grid { grid-template-columns: 1fr; gap: 44px; }
   .how-vis { order: -1; position: static; }
   .ch-bloom { top: -40px; right: -20px; width: 110px; }
@@ -484,7 +480,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 @media (max-width: 480px) {
   .f-marquee { --fcard-w: 262px; --fgap: 20px; padding: 22px 0; }
   .hero-title { font-size: 3.3rem; }
-  .ptip { font-size: .72rem; padding: 8px 13px; }
+  .ptip { font-size: .9rem; padding: 11px 17px; }
   .prob-q-text { font-size: 1.45rem; }
 }
 
@@ -602,8 +598,6 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 <!-- ═══ HERO ═══ -->
 <section id="hero">
-  <div class="bloom hero-bloom" aria-hidden="true"><svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"><path d="M14 294 C 84 240, 140 184, 206 92"/><path d="M124 200 C 154 192, 178 172, 190 146"/><path d="M76 250 C 60 236, 52 216, 54 196"/></g><g transform="translate(214 78)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><g transform="translate(196 138) scale(.7)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><g transform="translate(52 190) scale(.55)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><circle cx="124" cy="200" r="4.5" stroke="currentColor" stroke-width="2.2" fill="none"/><circle cx="248" cy="44" r="3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg></div>
-  <div class="bloom hero-bloom-2" aria-hidden="true"><svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"><path d="M14 294 C 84 240, 140 184, 206 92"/><path d="M124 200 C 154 192, 178 172, 190 146"/><path d="M76 250 C 60 236, 52 216, 54 196"/></g><g transform="translate(214 78)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><g transform="translate(196 138) scale(.7)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><g transform="translate(52 190) scale(.55)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><circle cx="124" cy="200" r="4.5" stroke="currentColor" stroke-width="2.2" fill="none"/><circle cx="248" cy="44" r="3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg></div>
 
   <!-- LEFT -->
   <div class="hero-left">
