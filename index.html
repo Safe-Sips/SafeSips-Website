@@ -6,7 +6,7 @@
 <title>SafeSips — Your Best Party Friend</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="description" content="SafeSips is a discreet pen that detects drugs in your drink in seconds — with instant alerts to the people you trust. Designed in Bucharest.">
 <meta name="theme-color" content="#14193B">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'self'; form-action 'self'; object-src 'none'">
@@ -34,8 +34,8 @@
   --r-md: 16px;
   --shadow-card: 0 2px 6px rgba(20,25,59,.05), 0 20px 48px rgba(20,25,59,.10);
   --shadow-pink: 0 10px 28px rgba(221,46,124,.30);
-  --font-display: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
-  --font-body: 'Instrument Sans', 'Segoe UI', sans-serif;
+  --font-display: 'Nunito', 'Segoe UI', sans-serif;
+  --font-body: 'Nunito', 'Segoe UI', sans-serif;
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -127,7 +127,7 @@ button { font-family: inherit; }
 }
 
 .hero-title {
-  font-family: var(--font-display); font-weight: 800;
+  font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif; font-weight: 800;
   font-size: clamp(3.6rem, 8.2vw, 7rem);
   line-height: .96; color: var(--ink); margin-bottom: 20px; letter-spacing: -.035em;
 }
@@ -218,7 +218,7 @@ section { position: relative; padding: 110px 6vw; overflow: hidden; }
 .prob-cta-line strong { color: #fff; font-weight: 700; }
 
 /* ── STATS ── */
-#stats { background: var(--card); padding: 0; border-bottom: 1px solid var(--line); }
+#stats { background: var(--card); padding: 0; }
 .stats-inner-wrap { padding: 76px 6vw; }
 .stats-inner { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 1020px; margin: 0 auto; }
 .scard { text-align: center; padding: 12px 32px; }
@@ -451,6 +451,9 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity .72s ease, transform .72s ease; }
 .reveal.visible { opacity: 1; transform: none; }
 
+.wave-div { display: block; width: 100%; line-height: 0; pointer-events: none; overflow: hidden; }
+.wave-div svg { display: block; width: 100%; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .pt1 { left: 2%; }
@@ -632,6 +635,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 
 <!-- ═══ THE PROBLEM ═══ -->
+<div class="wave-div" style="background:var(--bg)"><svg viewBox="0 0 1440 72" preserveAspectRatio="none" style="height:72px"><path d="M0,36 C360,72 1080,0 1440,36 L1440,72 L0,72 Z" fill="var(--ink)"/></svg></div>
 <section id="problem">
   <div class="prob-inner">
     <p class="prob-eyebrow reveal">The Reality · Romania 2024</p>
@@ -653,6 +657,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 
 <!-- ═══ WHY SAFESIPS ═══ -->
+<div class="wave-div" style="background:var(--ink)"><svg viewBox="0 0 1440 64" preserveAspectRatio="none" style="height:64px"><path d="M0,0 C480,64 960,0 1440,48 L1440,64 L0,64 Z" fill="var(--bg)"/></svg></div>
 <section id="friends">
   <div class="reveal">
     <div class="tag">Why SafeSips</div>
@@ -741,6 +746,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 
 <!-- ═══ STATS ═══ -->
+<div class="wave-div" style="background:var(--bg)"><svg viewBox="0 0 1440 64" preserveAspectRatio="none" style="height:64px"><path d="M0,64 C360,0 1080,64 1440,16 L1440,64 Z" fill="var(--card)"/></svg></div>
 <section id="stats">
   <div class="stats-inner-wrap">
     <div class="stats-inner reveal">
@@ -762,6 +768,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 
 <!-- ═══ HOW IT WORKS ═══ -->
+<div class="wave-div" style="background:var(--card)"><svg viewBox="0 0 1440 64" preserveAspectRatio="none" style="height:64px"><path d="M0,32 C480,64 960,0 1440,32 L1440,64 L0,64 Z" fill="var(--blush)"/></svg></div>
 <section id="how">
   <div class="reveal">
     <div class="tag">The Science, Simplified</div>
@@ -854,6 +861,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 
 <!-- ═══ THE APP ═══ -->
+<div class="wave-div" style="background:var(--blush)"><svg viewBox="0 0 1440 64" preserveAspectRatio="none" style="height:64px"><path d="M0,16 C360,64 1080,0 1440,48 L1440,64 L0,64 Z" fill="var(--ink)"/></svg></div>
 <section id="app">
   <div class="reveal">
     <div class="tag">The App</div>
@@ -957,6 +965,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 
 <!-- ═══ CTA ═══ -->
+<div class="wave-div" style="background:var(--ink)"><svg viewBox="0 0 1440 72" preserveAspectRatio="none" style="height:72px"><path d="M0,36 C360,72 1080,0 1440,36 L1440,72 L0,72 Z" fill="#E0347F"/></svg></div>
 <section id="cta">
   <div class="bloom cta-bloom" aria-hidden="true"><svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"><path d="M14 294 C 84 240, 140 184, 206 92"/><path d="M124 200 C 154 192, 178 172, 190 146"/><path d="M76 250 C 60 236, 52 216, 54 196"/></g><g transform="translate(214 78)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><g transform="translate(196 138) scale(.7)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><g transform="translate(52 190) scale(.55)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><circle cx="124" cy="200" r="4.5" stroke="currentColor" stroke-width="2.2" fill="none"/><circle cx="248" cy="44" r="3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg></div>
   <div class="bloom cta-bloom-2" aria-hidden="true"><svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"><path d="M14 294 C 84 240, 140 184, 206 92"/><path d="M124 200 C 154 192, 178 172, 190 146"/><path d="M76 250 C 60 236, 52 216, 54 196"/></g><g transform="translate(214 78)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><g transform="translate(196 138) scale(.7)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><g transform="translate(52 190) scale(.55)"><g stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" fill="none"><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(72)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(144)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(216)"/><path d="M0 -7 C 8 -13, 10 -26, 0 -34 C -10 -26, -8 -13, 0 -7" transform="rotate(288)"/><circle r="3.2" fill="currentColor" stroke="none"/></g></g><circle cx="124" cy="200" r="4.5" stroke="currentColor" stroke-width="2.2" fill="none"/><circle cx="248" cy="44" r="3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg></div>
@@ -970,6 +979,7 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 64px 6vw 
 
 
 <!-- FOOTER -->
+<div class="wave-div" style="background:var(--pink-dark)"><svg viewBox="0 0 1440 56" preserveAspectRatio="none" style="height:56px"><path d="M0,28 C480,0 960,56 1440,28 L1440,56 L0,56 Z" fill="var(--ink)"/></svg></div>
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
