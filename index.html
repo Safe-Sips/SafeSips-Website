@@ -152,16 +152,71 @@ button { font-family: inherit; }
 }
 .btn-s:hover { background: var(--ink); border-color: var(--ink); color: #fff; transform: translateY(-2px); }
 
-/* hero product render */
+/* hero product model — closed matte shell ⇄ x-ray channel reveal on hover */
 .hero-right { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; animation: fadeUp 1s ease .2s both; }
-.pen-stage { position: relative; width: min(420px, 100%); }
-.pen-img {
-  display: block; width: 100%; height: auto;
-  border-radius: var(--r-lg);
-  box-shadow: 0 4px 10px rgba(20,25,59,.06), 0 34px 80px rgba(20,25,59,.16);
-  animation: penFloat 7s ease-in-out infinite;
-}
+.pen-stage { position: relative; width: min(360px, 100%); display: flex; align-items: center; justify-content: center; padding: 10px 0 48px; }
+.pen-img { display: block; width: 100%; height: auto; border-radius: 24px; box-shadow: 0 4px 10px rgba(20,25,59,.06), 0 30px 70px rgba(20,25,59,.16); animation: penFloat 7s ease-in-out infinite; }
 @keyframes penFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.pen-stage::before {
+  content: ''; position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);
+  width: min(430px, 88vw); height: min(430px, 88vw); border-radius: 50%;
+  background: radial-gradient(circle, rgba(221,46,124,.13) 0%, rgba(221,46,124,.05) 46%, transparent 72%);
+  pointer-events: none;
+}
+.pen-wrap {
+  position: relative; z-index: 2; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  border-radius: 30px;
+  transition: transform .55s cubic-bezier(.34,1.56,.64,1), filter .55s ease;
+  filter: drop-shadow(0 22px 34px rgba(20,25,59,.20));
+}
+.pen-wrap:hover, .pen-wrap.is-open {
+  transform: translateY(-8px) scale(1.02);
+  filter: drop-shadow(0 30px 46px rgba(20,25,59,.22)) drop-shadow(0 0 34px rgba(221,46,124,.26));
+}
+.pen-float { animation: penFloat 7s ease-in-out infinite; }
+.pen-wrap:hover .pen-float, .pen-wrap.is-open .pen-float { animation-play-state: paused; }
+@keyframes penFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.pen-svg { display: block; height: clamp(470px, 64vh, 590px); width: auto; }
+.pen-svg text { font-family: var(--font-display); }
+
+/* closed shell ⇄ glass internals crossfade */
+.pen-shell { transition: opacity .6s ease; }
+.pen-xray  { opacity: 0; transition: opacity .6s ease .05s; }
+.pen-wrap:hover .pen-shell, .pen-wrap.is-open .pen-shell { opacity: .08; }
+.pen-wrap:hover .pen-xray,  .pen-wrap.is-open .pen-xray  { opacity: 1; }
+
+/* microfluidic channels fill from the tip upward (capillary action) */
+.ch-fill { stroke-dasharray: 100; stroke-dashoffset: 101; transition: stroke-dashoffset 1.05s cubic-bezier(.5,.06,.35,1); }
+.ch-a { transition-delay: .1s; } .ch-b { transition-delay: .3s; } .ch-c { transition-delay: .5s; }
+.pen-wrap:hover .ch-fill, .pen-wrap.is-open .ch-fill { stroke-dashoffset: 0; }
+
+/* optical read cells light up once their channel arrives */
+.cell-glow { opacity: 0; transition: opacity .5s ease; }
+.cg-a { transition-delay: .95s; } .cg-b { transition-delay: 1.15s; } .cg-c { transition-delay: 1.35s; }
+.pen-wrap:hover .cell-glow, .pen-wrap.is-open .cell-glow { opacity: .9; }
+
+/* reagent labels */
+.xlabel { opacity: 0; transition: opacity .5s ease, transform .5s ease; }
+.xl-l { transform: translateX(-12px); } .xl-r { transform: translateX(12px); }
+.xd1 { transition-delay: .42s; } .xd2 { transition-delay: .6s; } .xd3 { transition-delay: .78s; }
+.pen-wrap:hover .xlabel, .pen-wrap.is-open .xlabel { opacity: 1; transform: translateX(0); }
+
+/* raspberry scan sweep down the barrel */
+.scan-line { opacity: 0; }
+.pen-wrap:hover .scan-line, .pen-wrap.is-open .scan-line { animation: penScan 1.2s cubic-bezier(.45,.05,.45,1) .08s both; }
+@keyframes penScan {
+  0% { opacity: 0; transform: translateY(34px); }
+  12% { opacity: 1; }
+  80% { opacity: .8; }
+  100% { opacity: 0; transform: translateY(542px); }
+}
+
+/* status LED (always on, both states) */
+.led-halo { animation: ledPulse 2.2s ease-in-out infinite; }
+.led-ring { transform-box: fill-box; transform-origin: center; animation: ledPing 2.2s ease-out infinite; }
+@keyframes ledPulse { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
+@keyframes ledPing { 0% { transform: scale(.5); opacity: .7; } 75%,100% { transform: scale(1.6); opacity: 0; } }
+
 .ptip {
   position: absolute; z-index: 3;
   display: flex; align-items: center; gap: 8px;
@@ -171,11 +226,24 @@ button { font-family: inherit; }
   border: 1px solid rgba(255,255,255,.9);
   box-shadow: 0 10px 30px rgba(20,25,59,.16);
   animation: chipFloat 6s ease-in-out infinite;
+  transition: opacity .35s ease;
 }
 .ptip-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pink); flex-shrink: 0; }
-.pt1 { top: 16%; left: -8%; }
-.pt2 { bottom: 20%; right: -6%; animation-delay: 1.6s; }
+.pt1 { top: 13%; left: -17%; }
+.pt2 { bottom: 22%; right: -19%; animation-delay: 1.6s; }
 @keyframes chipFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+/* while the pen is open, clear the stage so the channel labels can breathe */
+.pen-stage:has(.pen-wrap:hover) .ptip, .pen-stage:has(.pen-wrap.is-open) .ptip { opacity: 0; }
+
+.pen-hint {
+  position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 7px; white-space: nowrap;
+  font-size: .85rem; font-weight: 600; color: var(--muted); opacity: .7;
+  transition: opacity .4s ease; pointer-events: none;
+}
+.pen-stage:has(.pen-wrap:hover) .pen-hint, .pen-stage:has(.pen-wrap.is-open) .pen-hint { opacity: 0; }
+.hint-tap { display: none; }
+@media (hover: none) { .hint-hover { display: none; } .hint-tap { display: inline; } }
 
 /* ── SHARED SECTION ── */
 section { position: relative; padding: 110px 6vw; overflow: hidden; }
